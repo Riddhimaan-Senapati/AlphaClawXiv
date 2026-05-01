@@ -1,0 +1,5 @@
+.npm-cache/
+.npm-cache-verify/
+*.log
+*.tmp
+*.bak

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "alphaxiv": {
+      "command": "C:\\Program Files\\nodejs\\npx.cmd",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://api.alphaxiv.org/mcp/v1",
+        "--header",
+        "Authorization:${ALPHAXIV_AUTH_HEADER}"
+      ]
+    }
+  }
+}

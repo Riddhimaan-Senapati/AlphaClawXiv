@@ -1,0 +1,20 @@
+{
+  "name": "alphaclawxiv-local",
+  "interface": {
+    "displayName": "AlphaClawXiv Local"
+  },
+  "plugins": [
+    {
+      "name": "alphaxiv-plugin",
+      "source": {
+        "source": "local",
+        "path": "./plugins/alphaxiv-plugin"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Research"
+    }
+  ]
+}
