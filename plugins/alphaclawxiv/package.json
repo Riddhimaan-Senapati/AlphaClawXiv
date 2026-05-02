@@ -1,6 +1,6 @@
 {
   "name": "alphaclawxiv",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Native OpenClaw plugin for AlphaXiv OAuth, paper search, PDF Q&A, and repository reading.",
   "type": "module",
   "license": "MIT",
