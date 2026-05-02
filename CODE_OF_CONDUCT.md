@@ -1,6 +1,6 @@
 # Code of Conduct
 
-Alphaclawxiv follows a simple contributor standard: be direct, respectful, and technical. Disagreement is fine; harassment, personal attacks, and bad-faith
+AlphaClawXiv follows a simple contributor standard: be direct, respectful, and technical. Disagreement is fine; harassment, personal attacks, and bad-faith
 participation are not.
 
 ## Expected Behavior

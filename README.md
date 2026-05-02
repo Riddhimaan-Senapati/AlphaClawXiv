@@ -1,16 +1,18 @@
-# Alphaclawxiv
+# AlphaClawXiv
 
 [![npm version](https://img.shields.io/npm/v/alphaclawxiv.svg)](https://www.npmjs.com/package/alphaclawxiv)
 [![npm downloads](https://img.shields.io/npm/dm/alphaclawxiv.svg)](https://www.npmjs.com/package/alphaclawxiv)
 [![ClawHub package](https://img.shields.io/badge/ClawHub-alphaclawxiv-blue)](https://clawhub.ai/packages/alphaclawxiv)
-[![license](https://img.shields.io/npm/l/alphaclawxiv.svg)](./LICENSE)
+[![Release](https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml/badge.svg)](https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml)
+[![license](https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg)](./LICENSE)
 
-Alphaclawxiv is a native OpenClaw plugin for AlphaXiv research workflows. It
+AlphaClawXiv is a native OpenClaw plugin for AlphaXiv research workflows. It
 adds OAuth-based AlphaXiv access, paper search, paper content lookup, PDF Q&A,
 and repository-reading tools without forcing OpenClaw to connect to a remote MCP
 server during gateway startup.
 
 The publishable plugin package lives in [plugins/alphaclawxiv](./plugins/alphaclawxiv).
+For upstream MCP behavior, see the [AlphaXiv MCP documentation](https://www.alphaxiv.org/docs/mcp).
 
 ## What It Does
 
@@ -104,7 +106,7 @@ Use AlphaXiv to find recent retrieval-augmented generation survey papers, then c
 
 ## Native Tools
 
-Alphaclawxiv exposes these tools to OpenClaw:
+AlphaClawXiv exposes these tools to OpenClaw:
 
 - `paper_search`: Search AlphaXiv for papers by topic, method, benchmark, author, or keyword.
 - `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
@@ -122,7 +124,9 @@ Alphaclawxiv exposes these tools to OpenClaw:
 ## Project Docs
 
 - [Contributing](./CONTRIBUTING.md)
+- [Code Structure](./docs/CODE_STRUCTURE.md)
 - [Publishing](./docs/PUBLISHING.md)
+- [Automated Releases](./docs/AUTOMATED_RELEASES.md)
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
 
 ## License

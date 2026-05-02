@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a reproducible Alphaclawxiv problem
+about: Report a reproducible AlphaClawXiv problem
 title: "[Bug]: "
 labels: bug
 assignees: ""
@@ -15,7 +15,7 @@ Briefly describe the problem.
 - OS:
 - Node.js version:
 - OpenClaw version:
-- Alphaclawxiv version:
+- AlphaClawXiv version:
 - Install source: local / npm / ClawHub
 
 ## Steps to Reproduce

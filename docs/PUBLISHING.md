@@ -1,7 +1,12 @@
-# Publishing Alphaclawxiv
+# Publishing AlphaClawXiv
 
 This document is for maintainers publishing `alphaclawxiv` to npm and ClawHub.
 User-facing install and usage instructions belong in the README.
+
+Automated GitHub Release publishing is the preferred path. See
+[Automated Releases](./AUTOMATED_RELEASES.md) for repository secrets, release
+tag conventions, and workflow behavior. Use the manual steps below only for
+one-off recovery or local verification.
 
 ## Preconditions
 
@@ -15,6 +20,17 @@ User-facing install and usage instructions belong in the README.
   - `openclaw.compat.minGatewayVersion`
   - `openclaw.build.openclawVersion`
   - `openclaw.build.pluginSdkVersion`
+
+## Automated Release Path
+
+1. Bump `plugins/alphaclawxiv/package.json`.
+2. Bump `plugins/alphaclawxiv/openclaw.plugin.json` to the same version.
+3. Run the verification steps below.
+4. Commit and push the release changes.
+5. Publish a GitHub Release with a tag matching the package version.
+
+The release workflow publishes to npm with provenance and then publishes the
+same version to ClawHub with source metadata.
 
 ## Verification
 
@@ -52,7 +68,17 @@ directly:
 Check ClawHub package contents:
 
 ```powershell
-clawhub package publish ./plugins/alphaclawxiv --dry-run --family code-plugin
+$version = node -p "require('./plugins/alphaclawxiv/package.json').version"
+$commit = git rev-parse HEAD
+clawhub package publish ./plugins/alphaclawxiv `
+  --family code-plugin `
+  --version $version `
+  --changelog "Release $version" `
+  --source-repo Riddhimaan-Senapati/AlphaClawXiv `
+  --source-commit $commit `
+  --source-ref main `
+  --source-path plugins/alphaclawxiv `
+  --dry-run
 ```
 
 Expected publish contents:
@@ -81,7 +107,16 @@ For scoped packages in the future, use `npm publish --access public`.
 From the repository root:
 
 ```powershell
-clawhub package publish ./plugins/alphaclawxiv --family code-plugin
+$version = node -p "require('./plugins/alphaclawxiv/package.json').version"
+$commit = git rev-parse HEAD
+clawhub package publish ./plugins/alphaclawxiv `
+  --family code-plugin `
+  --version $version `
+  --changelog "Release $version" `
+  --source-repo Riddhimaan-Senapati/AlphaClawXiv `
+  --source-commit $commit `
+  --source-ref main `
+  --source-path plugins/alphaclawxiv
 ```
 
 ## Post-Publish Checks

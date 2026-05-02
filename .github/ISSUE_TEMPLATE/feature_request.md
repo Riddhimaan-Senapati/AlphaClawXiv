@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Propose a new Alphaclawxiv capability or workflow
+about: Propose a new AlphaClawXiv capability or workflow
 title: "[Feature]: "
 labels: enhancement
 assignees: ""

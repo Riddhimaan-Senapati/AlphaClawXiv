@@ -24,7 +24,7 @@
     "papers"
   ],
   "bin": {
-    "alphaclawxiv": "./dist/index.js"
+    "alphaclawxiv": "dist/index.js"
   },
   "files": [
     "dist",

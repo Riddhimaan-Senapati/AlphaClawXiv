@@ -1,19 +1,22 @@
-# Alphaclawxiv
+# AlphaClawXiv
 
 [![npm version](https://img.shields.io/npm/v/alphaclawxiv.svg)](https://www.npmjs.com/package/alphaclawxiv)
 [![npm downloads](https://img.shields.io/npm/dm/alphaclawxiv.svg)](https://www.npmjs.com/package/alphaclawxiv)
 [![ClawHub package](https://img.shields.io/badge/ClawHub-alphaclawxiv-blue)](https://clawhub.ai/packages/alphaclawxiv)
-[![license](https://img.shields.io/npm/l/alphaclawxiv.svg)](./LICENSE)
+[![Release](https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml/badge.svg)](https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml)
+[![license](https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg)](./LICENSE)
 
 Native OpenClaw plugin for AlphaXiv research workflows: OAuth login, paper
 search, paper content lookup, PDF Q&A, and repository-reading tools.
 
 ## Why This Exists
 
-AlphaXiv exposes a hosted MCP endpoint. Alphaclawxiv wraps that endpoint as
+AlphaXiv exposes a hosted MCP endpoint. AlphaClawXiv wraps that endpoint as
 native OpenClaw commands and tools so the gateway does not need to connect to a
 remote MCP server during startup. This keeps gateway startup predictable while
 still giving agents access to AlphaXiv when a tool is actually used.
+
+For upstream MCP behavior, see the [AlphaXiv MCP documentation](https://www.alphaxiv.org/docs/mcp).
 
 ## Install
 
@@ -107,7 +110,7 @@ openclaw alphaxiv paper search "graph retrieval augmented generation"
 
 ## OpenClaw Agent Tools
 
-When enabled, Alphaclawxiv registers these native tools:
+When enabled, AlphaClawXiv registers these native tools:
 
 - `paper_search`: Search AlphaXiv by topic, method, benchmark, author, or keyword.
 - `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
@@ -133,6 +136,8 @@ Use AlphaXiv to find recent retrieval-augmented generation survey papers, then c
 - Repository: https://github.com/Riddhimaan-Senapati/AlphaClawXiv
 - Issues: https://github.com/Riddhimaan-Senapati/AlphaClawXiv/issues
 - Contributing: https://github.com/Riddhimaan-Senapati/AlphaClawXiv/blob/main/CONTRIBUTING.md
+- Code structure: https://github.com/Riddhimaan-Senapati/AlphaClawXiv/blob/main/docs/CODE_STRUCTURE.md
+- Automated releases: https://github.com/Riddhimaan-Senapati/AlphaClawXiv/blob/main/docs/AUTOMATED_RELEASES.md
 
 ## License
 

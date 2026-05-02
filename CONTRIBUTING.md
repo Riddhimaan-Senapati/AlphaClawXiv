@@ -1,6 +1,6 @@
-# Contributing to Alphaclawxiv
+# Contributing to AlphaClawXiv
 
-Thanks for considering a contribution. Alphaclawxiv is a small OpenClaw plugin,
+Thanks for considering a contribution. AlphaClawXiv is a small OpenClaw plugin,
 so the bar for changes is straightforward: keep the gateway stable, avoid token
 leaks, and make research workflows easier to use.
 

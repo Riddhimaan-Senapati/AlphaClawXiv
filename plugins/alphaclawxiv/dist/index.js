@@ -675,7 +675,7 @@ function registerCli({ program }) {
   const root = program
     .command("alphaclawxiv")
     .alias("alphaxiv")
-    .description("Manage Alphaclawxiv OAuth and native AlphaXiv tools");
+    .description("Manage AlphaClawXiv OAuth and native AlphaXiv tools");
 
   const auth = root.command("auth").description("Manage AlphaXiv OAuth");
 
@@ -774,7 +774,7 @@ function registerCli({ program }) {
 
 const plugin = {
   id: "alphaclawxiv",
-  name: "Alphaclawxiv",
+  name: "AlphaClawXiv",
   description: "Native OpenClaw OAuth, paper search, PDF Q&A, and repository-reading tools for AlphaXiv.",
   configSchema: {
     type: "object",
@@ -796,12 +796,12 @@ const plugin = {
         descriptors: [
           {
             name: "alphaxiv",
-            description: "Manage Alphaclawxiv OAuth and native AlphaXiv tools",
+            description: "Manage AlphaClawXiv OAuth and native AlphaXiv tools",
             hasSubcommands: true
           },
           {
             name: "alphaclawxiv",
-            description: "Manage Alphaclawxiv OAuth and native AlphaXiv tools",
+            description: "Manage AlphaClawXiv OAuth and native AlphaXiv tools",
             hasSubcommands: true
           }
         ]
