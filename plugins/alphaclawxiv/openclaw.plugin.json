@@ -1,0 +1,70 @@
+{
+  "id": "alphaclawxiv",
+  "name": "Alphaclawxiv",
+  "description": "Native OpenClaw OAuth, paper search, PDF Q&A, and repository-reading tools for AlphaXiv.",
+  "version": "0.1.0",
+  "enabledByDefault": true,
+  "activation": {
+    "onStartup": false,
+    "onCommands": [
+      "alphaclawxiv",
+      "alphaxiv"
+    ]
+  },
+  "contracts": {
+    "tools": [
+      "paper_search",
+      "get_paper_content",
+      "answer_pdf_queries",
+      "read_files_from_github_repository"
+    ]
+  },
+  "commandAliases": [
+    {
+      "name": "alphaclawxiv"
+    },
+    {
+      "name": "alphaxiv"
+    }
+  ],
+  "skills": [
+    "./skills"
+  ],
+  "setup": {
+    "requiresRuntime": true
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "mcpUrl": {
+        "type": "string",
+        "default": "https://api.alphaxiv.org/mcp/v1"
+      },
+      "serverName": {
+        "type": "string",
+        "default": "alphaxiv"
+      },
+      "connectionTimeoutMs": {
+        "type": "number",
+        "minimum": 1,
+        "default": 30000
+      }
+    }
+  },
+  "uiHints": {
+    "mcpUrl": {
+      "label": "AlphaXiv MCP URL",
+      "help": "Hosted AlphaXiv Streamable HTTP MCP endpoint."
+    },
+    "serverName": {
+      "label": "MCP Server Name",
+      "help": "Name used in OpenClaw's mcp.servers map."
+    },
+    "connectionTimeoutMs": {
+      "label": "Connection Timeout",
+      "help": "Timeout used by OpenClaw when connecting to the hosted AlphaXiv MCP endpoint.",
+      "advanced": true
+    }
+  }
+}

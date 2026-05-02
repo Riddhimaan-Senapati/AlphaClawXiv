@@ -1,60 +1,130 @@
-# AlphaClawXiv
+# Alphaclawxiv
 
-AlphaXiv research plugin bundle for OpenClaw-compatible clients.
+[![npm version](https://img.shields.io/npm/v/alphaclawxiv.svg)](https://www.npmjs.com/package/alphaclawxiv)
+[![npm downloads](https://img.shields.io/npm/dm/alphaclawxiv.svg)](https://www.npmjs.com/package/alphaclawxiv)
+[![ClawHub package](https://img.shields.io/badge/ClawHub-alphaclawxiv-blue)](https://clawhub.ai/packages/alphaclawxiv)
+[![license](https://img.shields.io/npm/l/alphaclawxiv.svg)](./LICENSE)
 
-## What is in this repo
+Alphaclawxiv is a native OpenClaw plugin for AlphaXiv research workflows. It
+adds OAuth-based AlphaXiv access, paper search, paper content lookup, PDF Q&A,
+and repository-reading tools without forcing OpenClaw to connect to a remote MCP
+server during gateway startup.
 
-- `plugins/alphaxiv-plugin/`
-  - `.codex-plugin/plugin.json`: bundle plugin manifest
-  - `.mcp.json`: AlphaXiv MCP server definition
-  - `skills/alphaxiv/`: companion skill that teaches the agent when to use AlphaXiv
+The publishable plugin package lives in [plugins/alphaclawxiv](./plugins/alphaclawxiv).
 
-## Current approach
+## What It Does
 
-The bundle targets the official hosted AlphaXiv MCP endpoint:
-`https://api.alphaxiv.org/mcp/v1`
+- Authenticates with AlphaXiv through a local OAuth callback flow.
+- Registers native OpenClaw tools for paper discovery and paper analysis.
+- Provides terminal commands for quick research workflows.
+- Stores tokens under `~/.openclaw/alphaxiv` and never prints token values.
+- Avoids the `mcp.servers.alphaxiv` startup path, which can stall some OpenClaw gateway versions.
 
-For OpenClaw bundle compatibility, the plugin-local `.mcp.json` uses the
-`mcp-remote` stdio bridge rather than a direct remote MCP URL entry. OpenClaw's
-bundle inspector currently reports bundle-local MCP entries as stdio-only, so
-this is the publishable shape for OpenClaw today.
+## Install
 
-## Authentication
-
-AlphaXiv documents OAuth 2.0 for MCP access. This bundle currently expects you to
-provide a bearer token through an environment variable before use:
+Install the published plugin by package name:
 
 ```powershell
-$env:ALPHAXIV_AUTH_HEADER = "Bearer <your_alphaXiv_access_token>"
+openclaw plugins install alphaclawxiv
 ```
 
-## Install locally
+OpenClaw resolves package-name installs through ClawHub first and falls back to
+npm. You can also choose a registry explicitly:
 
-OpenClaw-compatible clients can install the bundle from this repo marketplace or
-directly from the plugin path:
-
-```bash
-openclaw plugins install alphaxiv-plugin --marketplace .
+```powershell
+openclaw plugins install clawhub:alphaclawxiv
+openclaw plugins install npm:alphaclawxiv
 ```
 
-or:
+Package pages:
 
-```bash
-openclaw plugins install ./plugins/alphaxiv-plugin
+- npm: [alphaclawxiv](https://www.npmjs.com/package/alphaclawxiv)
+- ClawHub: [alphaclawxiv](https://clawhub.ai/packages/alphaclawxiv)
+
+For local development from this repository:
+
+```powershell
+openclaw plugins install ./plugins/alphaclawxiv --force
 ```
 
-Then enable it if needed and restart the gateway/runtime.
+## Quick Start
 
-## Publish
+After installation, log in to AlphaXiv:
 
-Use the ClawHub plugin publish flow:
-
-```bash
-clawhub package publish ./plugins/alphaxiv-plugin --dry-run
-clawhub package publish ./plugins/alphaxiv-plugin
+```powershell
+openclaw alphaclawxiv auth login
+openclaw gateway restart
 ```
 
-## Local development
+Search for papers:
 
-Inspect the bundle files directly or install the plugin from the local path in an
-OpenClaw-compatible client that supports Codex-style bundle plugins.
+```powershell
+openclaw alphaclawxiv paper search "retrieval augmented generation"
+```
+
+The shorter alias also works:
+
+```powershell
+openclaw alphaxiv paper search "graph retrieval augmented generation"
+```
+
+## Development Install
+
+Use a local checkout only when developing or testing unpublished changes:
+
+```powershell
+openclaw plugins install ./plugins/alphaclawxiv --force
+```
+
+## Examples
+
+Fetch a paper summary or content:
+
+```powershell
+openclaw alphaclawxiv paper content "https://arxiv.org/abs/2404.10981"
+```
+
+Ask a question about a PDF:
+
+```powershell
+openclaw alphaclawxiv pdf ask "https://arxiv.org/pdf/2404.10981" "What is the main contribution?"
+```
+
+Read files from a related GitHub repository:
+
+```powershell
+openclaw alphaclawxiv repo read "https://github.com/owner/repo" "README.md"
+```
+
+Use it from an OpenClaw agent:
+
+```text
+Use AlphaXiv to find recent retrieval-augmented generation survey papers, then compare their methods, scope, and limitations.
+```
+
+## Native Tools
+
+Alphaclawxiv exposes these tools to OpenClaw:
+
+- `paper_search`: Search AlphaXiv for papers by topic, method, benchmark, author, or keyword.
+- `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
+- `answer_pdf_queries`: Ask targeted questions against a PDF URL.
+- `read_files_from_github_repository`: Read implementation files from a GitHub repository.
+
+## Common Pitfalls
+
+- Run `openclaw alphaclawxiv auth login` before using tools. A missing or expired token causes tool calls to fail.
+- Restart the gateway after first login or after installing/updating the plugin.
+- Prefer native tools. The optional `mcp install` command is for debugging only and can make some gateways stall.
+- Do not commit `~/.openclaw/.env`, OAuth token files, package tarballs, or local npm caches.
+- If a gateway health check times out immediately after restart, run `openclaw gateway status` once and retry health after warm-up.
+
+## Project Docs
+
+- [Contributing](./CONTRIBUTING.md)
+- [Publishing](./docs/PUBLISHING.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
+
+## License
+
+MIT. See [LICENSE](./LICENSE).

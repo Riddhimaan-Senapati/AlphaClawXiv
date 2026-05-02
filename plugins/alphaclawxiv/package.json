@@ -1,0 +1,55 @@
+{
+  "name": "alphaclawxiv",
+  "version": "0.1.0",
+  "description": "Native OpenClaw plugin for AlphaXiv OAuth, paper search, PDF Q&A, and repository reading.",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/Riddhimaan-Senapati/AlphaClawXiv#readme",
+  "bugs": {
+    "url": "https://github.com/Riddhimaan-Senapati/AlphaClawXiv/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Riddhimaan-Senapati/AlphaClawXiv.git",
+    "directory": "plugins/alphaclawxiv"
+  },
+  "keywords": [
+    "openclaw",
+    "clawhub",
+    "alphaxiv",
+    "arxiv",
+    "mcp",
+    "oauth",
+    "research",
+    "papers"
+  ],
+  "bin": {
+    "alphaclawxiv": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "skills",
+    "openclaw.plugin.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "openclaw": {
+    "extensions": [
+      "./dist/index.js"
+    ],
+    "runtimeExtensions": [
+      "./dist/index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.4.29",
+      "minGatewayVersion": ">=2026.4.29"
+    },
+    "build": {
+      "openclawVersion": "2026.4.29",
+      "pluginSdkVersion": "2026.4.29"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
