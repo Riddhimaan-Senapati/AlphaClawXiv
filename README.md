@@ -1,7 +1,7 @@
 # AlphaClawXiv
 
-[![npm version](https://img.shields.io/npm/v/alphaclawxiv.svg)](https://www.npmjs.com/package/alphaclawxiv)
-[![npm downloads](https://img.shields.io/npm/dm/alphaclawxiv.svg)](https://www.npmjs.com/package/alphaclawxiv)
+[![npm version](https://img.shields.io/npm/v/alphaclawxiv.svg?cacheSeconds=60)](https://www.npmjs.com/package/alphaclawxiv)
+[![npm downloads](https://img.shields.io/npm/dm/alphaclawxiv.svg?cacheSeconds=60)](https://www.npmjs.com/package/alphaclawxiv)
 [![ClawHub package](https://img.shields.io/badge/ClawHub-alphaclawxiv-blue)](https://clawhub.ai/packages/alphaclawxiv)
 [![Release](https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml/badge.svg)](https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml)
 [![license](https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg)](./LICENSE)
