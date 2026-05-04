@@ -4,6 +4,7 @@
 .npm-cache-openclaw-fresh/
 .alphaxiv-login.err
 .alphaxiv-login.out
+docs/FINDINGS.md
 *.log
 *.tmp
 *.bak
