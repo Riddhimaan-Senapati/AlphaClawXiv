@@ -2,6 +2,7 @@
 .npm-cache-verify/
 .npm-cache-openclaw/
 .npm-cache-openclaw-fresh/
+.npm-cache-release
 .alphaxiv-login.err
 .alphaxiv-login.out
 docs/FINDINGS.md
