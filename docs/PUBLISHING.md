@@ -134,6 +134,16 @@ openclaw plugins install clawhub:alphaclawxiv --force
 openclaw alphaclawxiv auth status
 ```
 
+On Windows, prefer the explicit `clawhub:` prefix even for manual verification.
+If a local folder named `AlphaClawXiv` or `alphaclawxiv` is near the current
+working directory, OpenClaw can mis-resolve `openclaw plugins install
+alphaclawxiv --force` as a local path or hook-pack install instead of a ClawHub
+package install.
+
+If reinstall fails with `EPERM` while renaming
+`~/.openclaw/extensions/alphaclawxiv`, stop the OpenClaw gateway first, remove
+the stale installed extension directory if needed, and retry the install.
+
 Verify badges on the README:
 
 - npm version badge resolves.

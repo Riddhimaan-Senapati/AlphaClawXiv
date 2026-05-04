@@ -24,10 +24,10 @@ For upstream MCP behavior, see the [AlphaXiv MCP documentation](https://www.alph
 
 ## Install
 
-Install the published plugin by package name:
+Install the published plugin from ClawHub:
 
 ```powershell
-openclaw plugins install alphaclawxiv --force
+openclaw plugins install clawhub:alphaclawxiv --force
 ```
 
 OpenClaw resolves package-name installs through ClawHub first and falls back to
@@ -118,9 +118,11 @@ AlphaClawXiv exposes these tools to OpenClaw:
 - Run `openclaw alphaclawxiv auth login` before using tools. A missing or expired token causes tool calls to fail.
 - Restart the gateway after first login or after installing/updating the plugin.
 - Package installs can take a few minutes while OpenClaw resolves and extracts ClawHub or npm packages.
+- On Windows, if your current folder or a nearby folder is named `AlphaClawXiv` or `alphaclawxiv`, `openclaw plugins install alphaclawxiv --force` can be misread as a local path install. Use `openclaw plugins install clawhub:alphaclawxiv --force` to avoid path-resolution collisions.
 - Prefer native tools. The optional `mcp install` command is for debugging only and can make some gateways stall.
 - Do not commit `~/.openclaw/.env`, OAuth token files, package tarballs, or local npm caches.
 - If a gateway health check times out immediately after restart, run `openclaw gateway status` once and retry health after warm-up.
+- If a Windows reinstall fails with `EPERM` while renaming `~/.openclaw/extensions/alphaclawxiv`, stop the OpenClaw gateway before retrying the install.
 - If `openclaw gateway restart` points at a deleted npx cache path, repair the Windows service with `openclaw gateway install --force`.
 
 ## Project Docs

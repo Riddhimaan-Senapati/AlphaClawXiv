@@ -212,6 +212,17 @@ npx -y clawhub@0.12.0 package inspect alphaclawxiv --versions --limit 5
 This repository has been developed and tested on Windows. Prefer PowerShell
 commands in docs and examples unless a workflow file is Linux-only.
 
+When referring users to the published package on Windows, prefer:
+
+```powershell
+openclaw plugins install clawhub:alphaclawxiv --force
+```
+
+Reason: if a local folder named `AlphaClawXiv` or `alphaclawxiv` is near the
+current working directory, `openclaw plugins install alphaclawxiv --force` can
+be mis-resolved as a local path or hook-pack install and fail with `HOOK.md
+missing`.
+
 If `npm` has cache or shim permission problems, call `npm.cmd` directly and use
 a local explicit cache:
 
