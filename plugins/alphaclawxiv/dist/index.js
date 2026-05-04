@@ -48,7 +48,7 @@ const ALPHAXIV_TOOL_DEFINITIONS = [
   },
   {
     name: "answer_pdf_queries",
-    description: "Answer one or more questions about a PDF paper URL.",
+    description: "Return raw filtered PDF page content relevant to one or more questions.",
     parameters: {
       type: "object",
       additionalProperties: false,
@@ -729,7 +729,7 @@ function registerCli({ program }) {
       }));
     });
 
-  const pdf = root.command("pdf").description("Ask questions about PDFs");
+  const pdf = root.command("pdf").description("Retrieve PDF passages for questions");
   pdf
     .command("ask")
     .description("Ask AlphaXiv questions about a PDF URL")
@@ -775,7 +775,7 @@ function registerCli({ program }) {
 const plugin = {
   id: "alphaclawxiv",
   name: "AlphaClawXiv",
-  description: "Native OpenClaw OAuth, paper search, PDF Q&A, and repository-reading tools for AlphaXiv.",
+  description: "Native OpenClaw OAuth, paper search, PDF passage retrieval, and repository-reading tools for AlphaXiv.",
   configSchema: {
     type: "object",
     additionalProperties: false,

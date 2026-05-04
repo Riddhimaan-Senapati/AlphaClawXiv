@@ -7,7 +7,7 @@
 [![license](https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg)](./LICENSE)
 
 Native OpenClaw plugin for AlphaXiv research workflows: OAuth login, paper
-search, paper content lookup, PDF Q&A, and repository-reading tools.
+search, paper content lookup, targeted PDF passage retrieval, and repository-reading tools.
 
 ## Why This Exists
 
@@ -23,7 +23,7 @@ For upstream MCP behavior, see the [AlphaXiv MCP documentation](https://www.alph
 Install by package name:
 
 ```powershell
-openclaw plugins install alphaclawxiv
+openclaw plugins install alphaclawxiv --force
 ```
 
 OpenClaw checks ClawHub first and falls back to npm for package-name installs.
@@ -32,13 +32,13 @@ Use an explicit source when you want to force one registry.
 From ClawHub:
 
 ```powershell
-openclaw plugins install clawhub:alphaclawxiv
+openclaw plugins install clawhub:alphaclawxiv --force
 ```
 
 From npm:
 
 ```powershell
-openclaw plugins install npm:alphaclawxiv
+openclaw plugins install npm:alphaclawxiv --force
 ```
 
 Package pages:
@@ -90,7 +90,7 @@ openclaw alphaclawxiv paper content "https://arxiv.org/abs/2404.10981"
 openclaw alphaclawxiv paper content "https://arxiv.org/abs/2404.10981" --full-text
 ```
 
-Ask questions about a PDF:
+Retrieve PDF passages relevant to a question:
 
 ```powershell
 openclaw alphaclawxiv pdf ask "https://arxiv.org/pdf/2404.10981" "What is the main contribution?"
@@ -114,7 +114,7 @@ When enabled, AlphaClawXiv registers these native tools:
 
 - `paper_search`: Search AlphaXiv by topic, method, benchmark, author, or keyword.
 - `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
-- `answer_pdf_queries`: Ask targeted questions about a PDF URL.
+- `answer_pdf_queries`: Retrieve filtered PDF page content for targeted questions.
 - `read_files_from_github_repository`: Read implementation files from GitHub repositories.
 
 Example prompt:
@@ -127,8 +127,10 @@ Use AlphaXiv to find recent retrieval-augmented generation survey papers, then c
 
 - Authenticate first. Tool calls fail if the stored AlphaXiv token is missing or expired.
 - Restart OpenClaw after first login, install, or update.
+- Package installs can take a few minutes while OpenClaw resolves and extracts ClawHub or npm packages.
 - Keep the generic MCP startup config disabled unless you are debugging MCP connectivity.
 - If `openclaw gateway health` times out just after restart, run `openclaw gateway status`, wait for warm-up, then retry.
+- If `openclaw gateway restart` points at a deleted npx cache path, repair the Windows service with `openclaw gateway install --force`.
 - Do not share `~/.openclaw/alphaxiv/oauth.json` or `ALPHAXIV_AUTH_HEADER`.
 
 ## Project Links

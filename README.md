@@ -7,8 +7,8 @@
 [![license](https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg)](./LICENSE)
 
 AlphaClawXiv is a native OpenClaw plugin for AlphaXiv research workflows. It
-adds OAuth-based AlphaXiv access, paper search, paper content lookup, PDF Q&A,
-and repository-reading tools without forcing OpenClaw to connect to a remote MCP
+adds OAuth-based AlphaXiv access, paper search, paper content lookup, targeted
+PDF passage retrieval, and repository-reading tools without forcing OpenClaw to connect to a remote MCP
 server during gateway startup.
 
 The publishable plugin package lives in [plugins/alphaclawxiv](./plugins/alphaclawxiv).
@@ -27,15 +27,15 @@ For upstream MCP behavior, see the [AlphaXiv MCP documentation](https://www.alph
 Install the published plugin by package name:
 
 ```powershell
-openclaw plugins install alphaclawxiv
+openclaw plugins install alphaclawxiv --force
 ```
 
 OpenClaw resolves package-name installs through ClawHub first and falls back to
 npm. You can also choose a registry explicitly:
 
 ```powershell
-openclaw plugins install clawhub:alphaclawxiv
-openclaw plugins install npm:alphaclawxiv
+openclaw plugins install clawhub:alphaclawxiv --force
+openclaw plugins install npm:alphaclawxiv --force
 ```
 
 Package pages:
@@ -86,7 +86,7 @@ Fetch a paper summary or content:
 openclaw alphaclawxiv paper content "https://arxiv.org/abs/2404.10981"
 ```
 
-Ask a question about a PDF:
+Retrieve PDF passages relevant to a question:
 
 ```powershell
 openclaw alphaclawxiv pdf ask "https://arxiv.org/pdf/2404.10981" "What is the main contribution?"
@@ -110,16 +110,18 @@ AlphaClawXiv exposes these tools to OpenClaw:
 
 - `paper_search`: Search AlphaXiv for papers by topic, method, benchmark, author, or keyword.
 - `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
-- `answer_pdf_queries`: Ask targeted questions against a PDF URL.
+- `answer_pdf_queries`: Retrieve filtered PDF page content for targeted questions.
 - `read_files_from_github_repository`: Read implementation files from a GitHub repository.
 
 ## Common Pitfalls
 
 - Run `openclaw alphaclawxiv auth login` before using tools. A missing or expired token causes tool calls to fail.
 - Restart the gateway after first login or after installing/updating the plugin.
+- Package installs can take a few minutes while OpenClaw resolves and extracts ClawHub or npm packages.
 - Prefer native tools. The optional `mcp install` command is for debugging only and can make some gateways stall.
 - Do not commit `~/.openclaw/.env`, OAuth token files, package tarballs, or local npm caches.
 - If a gateway health check times out immediately after restart, run `openclaw gateway status` once and retry health after warm-up.
+- If `openclaw gateway restart` points at a deleted npx cache path, repair the Windows service with `openclaw gateway install --force`.
 
 ## Project Docs
 

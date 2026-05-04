@@ -48,7 +48,7 @@ Important files:
 - OAuth login, status, and logout commands.
 - Safe local token storage under `~/.openclaw/alphaxiv`.
 - Compatibility export for OpenClaw plugin loading.
-- Native tool registration for AlphaXiv paper search, paper content, PDF Q&A, and GitHub repository reads.
+- Native tool registration for AlphaXiv paper search, paper content, targeted PDF passage retrieval, and GitHub repository reads.
 - Optional generic MCP config installation for debugging only.
 
 The runtime should not perform network calls at module import time. Network
