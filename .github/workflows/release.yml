@@ -62,8 +62,8 @@ jobs:
           CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
           CHANGELOG: ${{ github.event.release.body || github.event.release.name || github.event.release.tag_name }}
         run: |
-          npx -y clawhub@latest login --token "$CLAWHUB_TOKEN" --no-browser
-          npx -y clawhub@latest package publish . \
+          npx -y clawhub@0.12.0 login --token "$CLAWHUB_TOKEN" --no-browser
+          npx -y clawhub@0.12.0 package publish . \
             --family code-plugin \
             --version "$PACKAGE_VERSION" \
             --changelog "$CHANGELOG" \
