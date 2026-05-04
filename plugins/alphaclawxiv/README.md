@@ -99,7 +99,7 @@ openclaw alphaclawxiv pdf ask "https://arxiv.org/pdf/2404.10981" "What is the ma
 Read a GitHub repository file:
 
 ```powershell
-openclaw alphaclawxiv repo read "https://github.com/owner/repo" "README.md"
+openclaw alphaclawxiv repo read "https://github.com/Riddhimaan-Senapati/AlphaClawXiv" "README.md"
 ```
 
 The shorter alias is also supported:

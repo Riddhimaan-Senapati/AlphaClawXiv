@@ -95,7 +95,7 @@ openclaw alphaclawxiv pdf ask "https://arxiv.org/pdf/2404.10981" "What is the ma
 Read files from a related GitHub repository:
 
 ```powershell
-openclaw alphaclawxiv repo read "https://github.com/owner/repo" "README.md"
+openclaw alphaclawxiv repo read "https://github.com/Riddhimaan-Senapati/AlphaClawXiv" "README.md"
 ```
 
 Use it from an OpenClaw agent:
