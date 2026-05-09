@@ -7,7 +7,8 @@
 [![license](https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg)](./LICENSE)
 
 Native OpenClaw plugin for AlphaXiv research workflows: OAuth login, paper
-search, paper content lookup, targeted PDF passage retrieval, and repository-reading tools.
+discovery, paper content lookup, targeted PDF passage retrieval, and
+repository-reading tools.
 
 ## Why This Exists
 
@@ -17,6 +18,9 @@ remote MCP server during startup. This keeps gateway startup predictable while
 still giving agents access to AlphaXiv when a tool is actually used.
 
 For upstream MCP behavior, see the [AlphaXiv MCP documentation](https://www.alphaxiv.org/docs/mcp).
+The hosted server used by this plugin is validated against the live MCP
+`tools/list` endpoint; if the docs page and the live server differ, this plugin
+follows the live hosted surface so OpenClaw stays functional.
 
 ## Install
 
@@ -81,6 +85,9 @@ Search for papers:
 
 ```powershell
 openclaw alphaclawxiv paper search "retrieval augmented generation"
+openclaw alphaclawxiv paper search-semantic "Research on retrieval-augmented generation systems for large language models, including retrieval pipelines, grounding, and hallucination mitigation."
+openclaw alphaclawxiv paper search-keyword "LoRA low-rank adaptation"
+openclaw alphaclawxiv paper search-agentic "What are the latest approaches to reducing hallucination in large language models?"
 ```
 
 Fetch paper content:
@@ -112,10 +119,16 @@ openclaw alphaxiv paper search "graph retrieval augmented generation"
 
 When enabled, AlphaClawXiv registers these native tools:
 
-- `paper_search`: Search AlphaXiv by topic, method, benchmark, author, or keyword.
+- `discover_papers`: Discover and rank papers for a topic using keywords, a semantic question, and a retrieval difficulty level.
 - `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
 - `answer_pdf_queries`: Retrieve filtered PDF page content for targeted questions.
 - `read_files_from_github_repository`: Read implementation files from GitHub repositories.
+
+The hosted AlphaXiv MCP currently exposes `discover_papers` as its
+paper-discovery tool. The terminal subcommands `paper search`,
+`paper search-semantic`, `paper search-keyword`, and `paper search-agentic`
+are local CLI conveniences that adapt your query into `discover_papers`
+inputs. They are not separate hosted MCP tool names.
 
 Example prompt:
 

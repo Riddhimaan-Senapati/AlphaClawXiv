@@ -46,6 +46,18 @@ Prefer native OpenClaw tools over a persistent `mcp.servers.alphaxiv` gateway
 connection. The native plugin avoids gateway startup stalls seen when OpenClaw
 tries to connect to the hosted AlphaXiv MCP endpoint during gateway boot.
 
+Do not assume the public AlphaXiv MCP docs page exactly matches the live hosted
+server. During live verification, the hosted `tools/list` endpoint exposed:
+
+- `discover_papers`
+- `get_paper_content`
+- `answer_pdf_queries`
+- `read_files_from_github_repository`
+
+The plugin should track the live hosted surface. CLI search variants may be
+implemented as local wrappers over `discover_papers`, but those wrapper names
+are not hosted MCP tool names.
+
 The optional MCP config command exists for debugging only. Do not make it the
 default install path unless the gateway behavior is revalidated.
 
@@ -183,6 +195,10 @@ openclaw plugins install ./plugins/alphaclawxiv --force
 openclaw alphaclawxiv auth status
 openclaw alphaclawxiv paper search "retrieval augmented generation"
 ```
+
+If you change tool names or input schemas, run an authenticated live check
+against the hosted AlphaXiv `tools/list` endpoint or an equivalent direct tool
+call before publishing.
 
 Verify ClawHub dry run with the pinned CLI:
 

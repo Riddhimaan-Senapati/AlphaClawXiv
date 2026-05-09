@@ -19,18 +19,27 @@ const DEFAULT_TIMEOUT_MS = 30000;
 const DEFAULT_SCOPES = "openid profile email offline_access";
 const ALPHAXIV_TOOL_DEFINITIONS = [
   {
-    name: "paper_search",
-    description: "Search AlphaXiv for papers relevant to a natural-language query.",
+    name: "discover_papers",
+    description: "Discover and rank multiple candidate papers for a research topic.",
     parameters: {
       type: "object",
       additionalProperties: false,
       properties: {
-        query: {
+        keywords: {
+          type: "array",
+          description: "3-4 concise keyword terms for exact matching.",
+          items: { type: "string" }
+        },
+        question: {
           type: "string",
-          description: "Natural-language search query."
+          description: "Detailed semantic description of the desired papers."
+        },
+        difficulty: {
+          type: "number",
+          description: "1-10 estimate of how much retrieval effort the query warrants."
         }
       },
-      required: ["query"]
+      required: ["keywords", "question", "difficulty"]
     }
   },
   {
@@ -169,6 +178,74 @@ function normalizeToolResult(result) {
     content,
     details: result ?? {},
     isError: Boolean(result?.isError)
+  };
+}
+
+const DISCOVER_STOPWORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "are",
+  "as",
+  "at",
+  "be",
+  "by",
+  "do",
+  "for",
+  "from",
+  "how",
+  "in",
+  "into",
+  "is",
+  "latest",
+  "of",
+  "on",
+  "or",
+  "the",
+  "their",
+  "this",
+  "to",
+  "using",
+  "what",
+  "with"
+]);
+
+function extractDiscoverKeywords(query) {
+  const normalized = String(query || "").toLowerCase().replace(/[^a-z0-9\s-]/g, " ");
+  const words = normalized
+    .split(/\s+/)
+    .map((word) => word.trim())
+    .filter((word) => word.length >= 3 && !DISCOVER_STOPWORDS.has(word));
+  const ranked = [];
+  const seen = new Set();
+  for (const word of words) {
+    if (seen.has(word)) {
+      continue;
+    }
+    seen.add(word);
+    ranked.push(word);
+    if (ranked.length >= 4) {
+      break;
+    }
+  }
+  return ranked.length > 0 ? ranked : ["research", "papers"];
+}
+
+function buildDiscoverPapersArgs(query, mode = "default") {
+  const text = String(query || "").trim();
+  const keywords = extractDiscoverKeywords(text);
+  let difficulty = 5;
+  if (mode === "semantic") {
+    difficulty = 6;
+  } else if (mode === "agentic") {
+    difficulty = 8;
+  } else if (mode === "keyword") {
+    difficulty = 4;
+  }
+  return {
+    keywords,
+    question: text,
+    difficulty
   };
 }
 
@@ -552,6 +629,9 @@ function printUsage() {
   alphaclawxiv auth status [--server-name <name>]
   alphaclawxiv auth logout
   alphaclawxiv paper search <query>
+  alphaclawxiv paper search-semantic <query>
+  alphaclawxiv paper search-keyword <query>
+  alphaclawxiv paper search-agentic <query>
   alphaclawxiv paper content <url> [--full-text]
   alphaclawxiv pdf ask <url> <question...>
   alphaclawxiv repo read <github-url> <path>
@@ -609,7 +689,31 @@ async function runStandalone(argv = process.argv.slice(2)) {
     if (!query) {
       throw new Error("Missing search query.");
     }
-    printToolResult(await callAlphaXivTool("paper_search", { query }));
+    printToolResult(await callAlphaXivTool("discover_papers", buildDiscoverPapersArgs(query, "agentic")));
+    return;
+  }
+  if (group === "paper" && command === "search-semantic") {
+    const query = positional.slice(2).join(" ").trim();
+    if (!query) {
+      throw new Error("Missing semantic search query.");
+    }
+    printToolResult(await callAlphaXivTool("discover_papers", buildDiscoverPapersArgs(query, "semantic")));
+    return;
+  }
+  if (group === "paper" && command === "search-keyword") {
+    const query = positional.slice(2).join(" ").trim();
+    if (!query) {
+      throw new Error("Missing keyword search query.");
+    }
+    printToolResult(await callAlphaXivTool("discover_papers", buildDiscoverPapersArgs(query, "keyword")));
+    return;
+  }
+  if (group === "paper" && command === "search-agentic") {
+    const query = positional.slice(2).join(" ").trim();
+    if (!query) {
+      throw new Error("Missing agentic search query.");
+    }
+    printToolResult(await callAlphaXivTool("discover_papers", buildDiscoverPapersArgs(query, "agentic")));
     return;
   }
   if (group === "paper" && command === "content") {
@@ -687,10 +791,34 @@ function registerCli({ program }) {
   const paper = root.command("paper").description("Use AlphaXiv paper tools");
   paper
     .command("search")
-    .description("Search AlphaXiv papers")
+    .description("Search AlphaXiv papers with agentic retrieval")
     .argument("<query...>", "Search query")
     .action(async (queryParts) => {
-      printToolResult(await callAlphaXivTool("paper_search", { query: queryParts.join(" ") }));
+      printToolResult(await callAlphaXivTool("discover_papers", buildDiscoverPapersArgs(queryParts.join(" "), "agentic")));
+    });
+
+  paper
+    .command("search-semantic")
+    .description("Search AlphaXiv papers by semantic similarity")
+    .argument("<query...>", "Detailed semantic search query")
+    .action(async (queryParts) => {
+      printToolResult(await callAlphaXivTool("discover_papers", buildDiscoverPapersArgs(queryParts.join(" "), "semantic")));
+    });
+
+  paper
+    .command("search-keyword")
+    .description("Search AlphaXiv papers by keyword or full-text match")
+    .argument("<query...>", "Keyword-oriented search query")
+    .action(async (queryParts) => {
+      printToolResult(await callAlphaXivTool("discover_papers", buildDiscoverPapersArgs(queryParts.join(" "), "keyword")));
+    });
+
+  paper
+    .command("search-agentic")
+    .description("Search AlphaXiv papers with multi-turn agentic retrieval")
+    .argument("<query...>", "Research question or topic")
+    .action(async (queryParts) => {
+      printToolResult(await callAlphaXivTool("discover_papers", buildDiscoverPapersArgs(queryParts.join(" "), "agentic")));
     });
 
   paper
@@ -752,7 +880,7 @@ function registerCli({ program }) {
 const plugin = {
   id: "alphaclawxiv",
   name: "AlphaClawXiv",
-  description: "Native OpenClaw OAuth, paper search, PDF passage retrieval, and repository-reading tools for AlphaXiv.",
+  description: "Native OpenClaw OAuth, full AlphaXiv MCP paper retrieval tools, PDF analysis, and repository-reading tools.",
   configSchema: {
     type: "object",
     additionalProperties: false,

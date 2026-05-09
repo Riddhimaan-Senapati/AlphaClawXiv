@@ -1,7 +1,7 @@
 {
   "name": "alphaclawxiv",
   "version": "0.1.6",
-  "description": "Native OpenClaw plugin for AlphaXiv OAuth, paper search, PDF passage retrieval, and repository reading.",
+  "description": "Native OpenClaw plugin for AlphaXiv OAuth, live MCP paper discovery, PDF analysis, and repository reading.",
   "type": "module",
   "license": "MIT",
   "homepage": "https://github.com/Riddhimaan-Senapati/AlphaClawXiv#readme",

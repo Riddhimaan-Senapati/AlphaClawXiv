@@ -50,6 +50,10 @@ openclaw gateway status
 openclaw gateway health
 ```
 
+Before release, verify the live hosted AlphaXiv MCP surface if any tool names
+or schemas changed. Do not assume the public docs page is current; this plugin
+should follow the hosted server that OpenClaw actually calls.
+
 Check npm package contents:
 
 ```powershell

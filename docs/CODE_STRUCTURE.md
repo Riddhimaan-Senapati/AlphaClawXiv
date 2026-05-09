@@ -48,7 +48,12 @@ Important files:
 - OAuth login, status, and logout commands.
 - Safe local token storage under `~/.openclaw/alphaxiv`.
 - Compatibility export for OpenClaw plugin loading.
-- Native tool registration for AlphaXiv paper search, paper content, targeted PDF passage retrieval, and GitHub repository reads.
+- Native tool registration for the live hosted AlphaXiv MCP surface:
+  `discover_papers`, `get_paper_content`, `answer_pdf_queries`, and
+  `read_files_from_github_repository`.
+- CLI search adapters that translate `paper search`, `paper search-semantic`,
+  `paper search-keyword`, and `paper search-agentic` into `discover_papers`
+  arguments.
 - Optional generic MCP config installation for debugging only.
 
 The runtime should not perform network calls at module import time. Network
@@ -81,6 +86,8 @@ or issue comments.
 
 When adding a new AlphaXiv capability:
 
+- Verify the live hosted MCP tool name and schema before editing docs or tool
+  registration; do not assume the docs page is current.
 - Add the tool definition and handler in `dist/index.js`.
 - Add CLI coverage if the workflow should be usable from a terminal.
 - Update `skills/alphaxiv/SKILL.md` so agents know when to use it.

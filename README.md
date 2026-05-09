@@ -1,18 +1,47 @@
-# AlphaClawXiv
+<h1 align="center">AlphaClawXiv</h1>
 
-[![npm version](https://img.shields.io/npm/v/alphaclawxiv.svg?cacheSeconds=60)](https://www.npmjs.com/package/alphaclawxiv)
-[![npm downloads](https://img.shields.io/npm/dm/alphaclawxiv.svg?cacheSeconds=60)](https://www.npmjs.com/package/alphaclawxiv)
-[![ClawHub package](https://img.shields.io/badge/ClawHub-alphaclawxiv-blue)](https://clawhub.ai/packages/alphaclawxiv)
-[![Release](https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml/badge.svg)](https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml)
-[![license](https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg)](./LICENSE)
+<p align="center">
+  Native OpenClaw research workflows for AlphaXiv, with local OAuth, paper discovery, PDF-grounded Q&A, and repository-aware analysis.
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/alphaclawxiv"><img src="https://img.shields.io/npm/v/alphaclawxiv.svg?cacheSeconds=60" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/alphaclawxiv"><img src="https://img.shields.io/npm/dm/alphaclawxiv.svg?cacheSeconds=60" alt="npm downloads"></a>
+  <a href="https://clawhub.ai/packages/alphaclawxiv"><img src="https://img.shields.io/badge/ClawHub-alphaclawxiv-blue" alt="ClawHub package"></a>
+  <a href="https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml"><img src="https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml/badge.svg" alt="Release workflow"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg" alt="license"></a>
+</p>
+
+<p align="center">
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#examples">Examples</a> •
+  <a href="#native-tools">Native Tools</a> •
+  <a href="./docs/CODE_STRUCTURE.md">Code Structure</a> •
+  <a href="./CONTRIBUTING.md">Contributing</a>
+</p>
+
+<p align="center">
+  <video src="./alphaclawxiv_demo_video.mp4" controls playsinline muted width="100%"></video>
+</p>
+
+<p align="center">
+  Demo video not rendering in your Markdown viewer? <a href="./alphaclawxiv_demo_video.mp4">Open the MP4 directly</a>.
+</p>
 
 AlphaClawXiv is a native OpenClaw plugin for AlphaXiv research workflows. It
-adds OAuth-based AlphaXiv access, paper search, paper content lookup, targeted
-PDF passage retrieval, and repository-reading tools without forcing OpenClaw to connect to a remote MCP
-server during gateway startup.
+adds OAuth-based AlphaXiv access, paper discovery, paper content lookup,
+targeted PDF passage retrieval, and repository-reading tools without forcing
+OpenClaw to maintain a remote MCP connection during gateway startup.
 
 The publishable plugin package lives in [plugins/alphaclawxiv](./plugins/alphaclawxiv).
 For upstream MCP behavior, see the [AlphaXiv MCP documentation](https://www.alphaxiv.org/docs/mcp).
+
+## Why AlphaClawXiv
+
+- Keeps AlphaXiv usable from OpenClaw without relying on a persistent `mcp.servers.alphaxiv` startup connection.
+- Exposes a native OpenClaw workflow for paper discovery, paper reading, and PDF-grounded research questions.
+- Preserves a practical terminal UX through `openclaw alphaclawxiv ...` commands.
+- Uses local OAuth state and redacted status output instead of leaking tokens into logs or prompts.
 
 ## What It Does
 
@@ -108,10 +137,15 @@ Use AlphaXiv to find recent retrieval-augmented generation survey papers, then c
 
 AlphaClawXiv exposes these tools to OpenClaw:
 
-- `paper_search`: Search AlphaXiv for papers by topic, method, benchmark, author, or keyword.
+- `discover_papers`: Discover and rank papers for a topic using keywords, a semantic question, and retrieval difficulty.
 - `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
 - `answer_pdf_queries`: Retrieve filtered PDF page content for targeted questions.
 - `read_files_from_github_repository`: Read implementation files from a GitHub repository.
+
+The hosted AlphaXiv MCP currently exposes `discover_papers` as its
+paper-discovery tool. The terminal subcommands `paper search`,
+`paper search-semantic`, `paper search-keyword`, and `paper search-agentic`
+are local CLI conveniences that map your query into `discover_papers` inputs.
 
 ## Common Pitfalls
 

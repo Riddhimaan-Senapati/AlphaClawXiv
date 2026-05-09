@@ -1,7 +1,7 @@
 {
   "id": "alphaclawxiv",
   "name": "AlphaClawXiv",
-  "description": "Native OpenClaw OAuth, paper search, PDF passage retrieval, and repository-reading tools for AlphaXiv.",
+  "description": "Native OpenClaw OAuth, live AlphaXiv MCP paper discovery, PDF analysis, and repository-reading tools.",
   "version": "0.1.6",
   "enabledByDefault": true,
   "activation": {
@@ -13,7 +13,7 @@
   },
   "contracts": {
     "tools": [
-      "paper_search",
+      "discover_papers",
       "get_paper_content",
       "answer_pdf_queries",
       "read_files_from_github_repository"
