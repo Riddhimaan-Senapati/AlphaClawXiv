@@ -1,0 +1,9 @@
+name: alphaclawxiv
+version: 0.1.0
+description: AlphaXiv research workflows for Hermes Agent via the live hosted MCP surface.
+author: Riddhimaan Senapati
+provides_tools:
+  - discover_papers
+  - get_paper_content
+  - answer_pdf_queries
+  - read_files_from_github_repository

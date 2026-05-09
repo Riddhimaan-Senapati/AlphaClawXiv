@@ -115,6 +115,21 @@ The shorter alias is also supported:
 openclaw alphaxiv paper search "graph retrieval augmented generation"
 ```
 
+## Verified On Windows
+
+The following OpenClaw flows were live-tested on Windows against the hosted
+AlphaXiv service:
+
+```powershell
+openclaw alphaclawxiv auth status
+openclaw alphaclawxiv paper search "retrieval augmented generation"
+openclaw alphaclawxiv pdf ask "https://arxiv.org/pdf/2404.10981" "What is the main contribution?"
+```
+
+The installed OpenClaw extension also includes the bundled skill file at:
+
+- `~/.openclaw/extensions/alphaclawxiv/skills/alphaxiv/SKILL.md`
+
 ## OpenClaw Agent Tools
 
 When enabled, AlphaClawXiv registers these native tools:

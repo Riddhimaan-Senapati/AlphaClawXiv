@@ -21,11 +21,13 @@
 </p>
 
 <p align="center">
-  <video src="./alphaclawxiv_demo_video.mp4" controls playsinline muted width="100%"></video>
+    <a href="https://www.youtube.com/watch?v=bfmUQnuwhag">
+      <img src="https://img.youtube.com/vi/bfmUQnuwhag/maxresdefault.jpg" alt="AlphaClawXiv demo video" width="100%">
+    </a>
 </p>
 
 <p align="center">
-  Demo video not rendering in your Markdown viewer? <a href="./alphaclawxiv_demo_video.mp4">Open the MP4 directly</a>.
+  Demo video not rendering in your Markdown viewer? <a href="https://www.youtube.com/watch?v=bfmUQnuwhag">Watch it on YouTube</a> or <a href="./assets/alphaclawxiv_demo_video.mp4">open the local MP4</a>.
 </p>
 
 AlphaClawXiv is a native OpenClaw plugin for AlphaXiv research workflows. It
@@ -163,6 +165,7 @@ are local CLI conveniences that map your query into `discover_papers` inputs.
 
 - [Contributing](./CONTRIBUTING.md)
 - [Code Structure](./docs/CODE_STRUCTURE.md)
+- [Hermes Agent Integration](./docs/HERMES_AGENT.md)
 - [Publishing](./docs/PUBLISHING.md)
 - [Automated Releases](./docs/AUTOMATED_RELEASES.md)
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
