@@ -49,11 +49,12 @@ publisher configuration instead. Until then, `NPM_TOKEN` is the portable path.
 
 ## ClawHub Publishing
 
-The workflow logs in to ClawHub with `CLAWHUB_TOKEN`, then publishes the same
-package with source metadata:
+The workflow first builds a ClawPack by running `npm pack --json
+--ignore-scripts`, dry-runs the ClawHub publish, then logs in to ClawHub with
+`CLAWHUB_TOKEN` and publishes that `.tgz` artifact with source metadata:
 
 ```bash
-clawhub package publish ./plugins/alphaclawxiv \
+npx -y clawhub@0.17.0 package publish "$CLAWPACK_PATH" \
   --family code-plugin \
   --version "$PACKAGE_VERSION" \
   --changelog "$CHANGELOG" \
@@ -63,8 +64,11 @@ clawhub package publish ./plugins/alphaclawxiv \
   --source-path plugins/alphaclawxiv
 ```
 
-The source metadata lets ClawHub connect the package artifact back to the exact
-GitHub source revision.
+Publishing the npm-pack `.tgz` is intentional. It avoids OpenClaw's legacy ZIP
+install warning: `This plugin uses the legacy ZIP path and may have
+compatibility issues until the publisher uploads a ClawPack.` The source
+metadata lets ClawHub connect the package artifact back to the exact GitHub
+source revision.
 
 ## Release Checklist
 
@@ -75,6 +79,7 @@ Before publishing a GitHub Release:
 - Confirm both versions match.
 - Run `node --check ./plugins/alphaclawxiv/dist/index.js`.
 - Run `npm pack --dry-run` from `plugins/alphaclawxiv`.
+- Run a ClawHub ClawPack dry run with `clawhub@0.17.0`.
 - Confirm README examples and docs match the new behavior.
 - Commit and push the release changes.
 - Create a GitHub Release with a tag matching the package version.

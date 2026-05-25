@@ -20,6 +20,7 @@ one-off recovery or local verification.
   - `openclaw.compat.minGatewayVersion`
   - `openclaw.build.openclawVersion`
   - `openclaw.build.pluginSdkVersion`
+- ClawHub publishing uses a ClawPack `.tgz` artifact, not the legacy ZIP path.
 
 ## Automated Release Path
 
@@ -69,12 +70,16 @@ directly:
 & "C:\Program Files\nodejs\npm.cmd" pack --dry-run
 ```
 
-Check ClawHub package contents:
+Build and check the ClawPack package contents:
 
 ```powershell
 $version = node -p "require('./plugins/alphaclawxiv/package.json').version"
 $commit = git rev-parse HEAD
-clawhub package publish ./plugins/alphaclawxiv `
+& "C:\Program Files\nodejs\npm.cmd" pack ./plugins/alphaclawxiv `
+  --json `
+  --ignore-scripts `
+  --pack-destination C:\tmp
+npx -y clawhub@0.17.0 package publish "C:\tmp\alphaclawxiv-$version.tgz" `
   --family code-plugin `
   --version $version `
   --changelog "Release $version" `
@@ -84,6 +89,10 @@ clawhub package publish ./plugins/alphaclawxiv `
   --source-path plugins/alphaclawxiv `
   --dry-run
 ```
+
+The dry run should report `Files:` for a `.tgz` ClawPack and should not use the
+legacy ZIP artifact path. The currently tested OpenClaw compatibility baseline
+is `2026.5.20`.
 
 Expected publish contents:
 
@@ -113,7 +122,11 @@ From the repository root:
 ```powershell
 $version = node -p "require('./plugins/alphaclawxiv/package.json').version"
 $commit = git rev-parse HEAD
-clawhub package publish ./plugins/alphaclawxiv `
+& "C:\Program Files\nodejs\npm.cmd" pack ./plugins/alphaclawxiv `
+  --json `
+  --ignore-scripts `
+  --pack-destination C:\tmp
+npx -y clawhub@0.17.0 package publish "C:\tmp\alphaclawxiv-$version.tgz" `
   --family code-plugin `
   --version $version `
   --changelog "Release $version" `

@@ -50,6 +50,28 @@ jobs:
         run: npm pack --dry-run
         working-directory: ./plugins/alphaclawxiv
 
+      - name: Build ClawPack artifact
+        shell: bash
+        working-directory: ./plugins/alphaclawxiv
+        run: |
+          PACK_JSON="$(npm pack --json --ignore-scripts --pack-destination "$RUNNER_TEMP")"
+          CLAWPACK_FILENAME="$(node -e 'const fs = require("fs"); const data = fs.readFileSync(0, "utf8"); console.log(JSON.parse(data)[0].filename);' <<< "$PACK_JSON")"
+          echo "CLAWPACK_PATH=$RUNNER_TEMP/$CLAWPACK_FILENAME" >> "$GITHUB_ENV"
+          echo "$PACK_JSON"
+
+      - name: Dry-run ClawHub ClawPack publish
+        shell: bash
+        run: |
+          npx -y clawhub@0.17.0 package publish "$CLAWPACK_PATH" \
+            --family code-plugin \
+            --version "$PACKAGE_VERSION" \
+            --changelog "Release $PACKAGE_VERSION" \
+            --source-repo "$GITHUB_REPOSITORY" \
+            --source-commit "$SOURCE_COMMIT" \
+            --source-ref "$GITHUB_REF_NAME" \
+            --source-path plugins/alphaclawxiv \
+            --dry-run
+
       - name: Publish to npm
         run: npm publish ./plugins/alphaclawxiv --provenance
         env:
@@ -62,8 +84,8 @@ jobs:
           CLAWHUB_TOKEN: ${{ secrets.CLAWHUB_TOKEN }}
           CHANGELOG: ${{ github.event.release.body || github.event.release.name || github.event.release.tag_name }}
         run: |
-          npx -y clawhub@0.12.0 login --token "$CLAWHUB_TOKEN" --no-browser
-          npx -y clawhub@0.12.0 package publish . \
+          npx -y clawhub@0.17.0 login --token "$CLAWHUB_TOKEN" --no-browser
+          npx -y clawhub@0.17.0 package publish "$CLAWPACK_PATH" \
             --family code-plugin \
             --version "$PACKAGE_VERSION" \
             --changelog "$CHANGELOG" \

@@ -120,6 +120,22 @@ def _error(message: str) -> str:
 
 
 def _hermes_home() -> Path:
+    env_home = os.getenv("HERMES_HOME", "").strip()
+    if env_home:
+        return Path(env_home).expanduser()
+
+    # When installed as a user plugin, this file lives under
+    # <hermes-home>/plugins/alphaclawxiv/__init__.py.
+    installed_home = Path(__file__).resolve().parents[2]
+    if (installed_home / "config.yaml").exists() or (installed_home / ".env").exists():
+        return installed_home
+
+    local_app_data = os.getenv("LOCALAPPDATA", "").strip()
+    if local_app_data:
+        windows_home = Path(local_app_data) / "hermes"
+        if (windows_home / "config.yaml").exists() or (windows_home / ".env").exists():
+            return windows_home
+
     return Path.home() / ".hermes"
 
 
@@ -740,3 +756,8 @@ def register(ctx: Any) -> None:
         setup_fn=_setup_argparse,
         handler_fn=_cli_handler,
     )
+    skills_dir = Path(__file__).parent / "skills"
+    for child in sorted(skills_dir.iterdir()):
+        skill_md = child / "SKILL.md"
+        if child.is_dir() and skill_md.exists():
+            ctx.register_skill(child.name, skill_md)

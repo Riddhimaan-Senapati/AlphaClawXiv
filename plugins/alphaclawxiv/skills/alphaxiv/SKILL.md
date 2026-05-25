@@ -5,8 +5,23 @@ description: Use AlphaXiv for research-paper discovery, literature review, arXiv
 
 # AlphaXiv Skill
 
-Use the native AlphaXiv tools registered by the `alphaclawxiv` plugin for
-research tasks. If the tools are not available, ask the user to run
+Use AlphaClawXiv for research tasks. Prefer native AlphaXiv tools when they are
+available in the current OpenClaw runtime. In Codex-harness OpenClaw agent runs,
+the native OpenClaw tools may not be projected as Codex tools; in that case,
+use the local CLI commands instead of web search:
+
+```powershell
+openclaw alphaclawxiv paper search "<query>"
+openclaw alphaclawxiv paper content "<url>"
+openclaw alphaclawxiv pdf ask "<pdf-url>" "<question>"
+openclaw alphaclawxiv repo read "<github-url>" "<path>"
+```
+
+Do not search the filesystem for the plugin before using it. Run the command
+directly; OpenClaw exposes `alphaclawxiv` as a CLI command when the plugin is
+enabled.
+
+If neither tools nor CLI commands work, ask the user to run
 `openclaw alphaclawxiv auth login` and restart the OpenClaw gateway after login
 completes.
 
@@ -27,7 +42,7 @@ stale documented six-tool list, when operating through this plugin.
 
 ## Defaults
 
-- Prefer the native AlphaXiv tools rather than website scraping.
+- Prefer AlphaClawXiv tools or CLI commands rather than website scraping.
 - Prefer `discover_papers` for both open-ended and targeted paper discovery.
 - Treat terminal subcommands like `paper search-semantic` and `paper search-keyword` as CLI helpers that map into `discover_papers`; they are not separate hosted MCP tool names.
 - Increase `difficulty` when the user asks for a broad survey, recent landscape, or multiple candidate approaches.

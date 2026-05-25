@@ -117,8 +117,31 @@ openclaw alphaxiv paper search "graph retrieval augmented generation"
 
 ## Verified On Windows
 
+The plugin is currently verified on Windows with OpenClaw `2026.5.20`:
+
+```powershell
+openclaw plugins list
+openclaw alphaclawxiv auth status
+openclaw agent --agent main --session-id oc-smoke --message "Reply with exactly OK." --thinking off --timeout 120 --json
+openclaw agent --agent main --session-id alphaclawxiv-cli-guidance-final --message "Use the AlphaClawXiv local CLI directly. Do not search the filesystem. Run an AlphaXiv paper search for retrieval augmented generation survey and reply with exactly one paper title and its ID." --thinking off --timeout 300 --json
+```
+
+The OpenClaw agent smoke test verified the Codex harness path with
+`openai-codex/gpt-5.5`, and the generated prompt included the bundled
+`alphaxiv` skill.
+
+AlphaClawXiv is configured as a startup-activated tool plugin so its native
+agent tools are available during normal OpenClaw agent runs, not only after a
+manual `openclaw alphaclawxiv ...` CLI command.
+
+On OpenClaw's Codex harness, registered OpenClaw plugin tools are not projected
+as native Codex tool calls in the current tested runtime. AlphaClawXiv therefore
+also injects a short prompt hint that tells Codex agents to use the local
+`openclaw alphaclawxiv ...` CLI commands when the native tools are not visible.
+This path was verified end to end with a model-driven OpenClaw agent run.
+
 The following OpenClaw flows were live-tested on Windows against the hosted
-AlphaXiv service:
+AlphaXiv service with current AlphaXiv OAuth:
 
 ```powershell
 openclaw alphaclawxiv auth status
@@ -129,6 +152,15 @@ openclaw alphaclawxiv pdf ask "https://arxiv.org/pdf/2404.10981" "What is the ma
 The installed OpenClaw extension also includes the bundled skill file at:
 
 - `~/.openclaw/extensions/alphaclawxiv/skills/alphaxiv/SKILL.md`
+
+Verified at the skill level:
+
+- the bundled OpenClaw skill file is present in the installed extension
+- the `alphaxiv` skill appears in OpenClaw agent prompt metadata
+
+Not verified end to end:
+
+- direct native OpenClaw tool projection inside the Codex app-server tool list; the tested Codex path uses AlphaClawXiv through the local OpenClaw CLI
 
 ## OpenClaw Agent Tools
 
@@ -159,6 +191,7 @@ Use AlphaXiv to find recent retrieval-augmented generation survey papers, then c
 - Keep the generic MCP startup config disabled unless you are debugging MCP connectivity.
 - If `openclaw gateway health` times out just after restart, run `openclaw gateway status`, wait for warm-up, then retry.
 - If `openclaw gateway restart` points at a deleted npx cache path, repair the Windows service with `openclaw gateway install --force`.
+- If OpenClaw `2026.5.x` reports that the Codex app-server binary is missing, reinstall/update OpenClaw and `@openclaw/codex`, then verify `plugins.entries.codex.config.appServer.command` points at the local `codex.cmd` if managed discovery still fails.
 - Do not share `~/.openclaw/alphaxiv/oauth.json` or `ALPHAXIV_AUTH_HEADER`.
 
 ## Project Links

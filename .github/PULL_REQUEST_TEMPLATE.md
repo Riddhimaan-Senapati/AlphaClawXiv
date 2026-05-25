@@ -17,7 +17,7 @@ Describe what changed and why.
 - [ ] `openclaw gateway status`
 - [ ] `openclaw gateway health`
 - [ ] `npm pack --dry-run` when package contents changed
-- [ ] `clawhub package publish ./plugins/alphaclawxiv --dry-run --family code-plugin` when ClawHub metadata changed
+- [ ] ClawPack dry run with `npx -y clawhub@0.17.0 package publish <alphaclawxiv-version>.tgz --dry-run --family code-plugin` when ClawHub metadata changed
 
 ## Security Checklist
 

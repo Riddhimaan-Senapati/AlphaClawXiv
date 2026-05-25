@@ -3,25 +3,59 @@
 This repository includes two Hermes Agent integration paths for AlphaXiv,
 guided by the current Hermes plugin, skill, and MCP documentation.
 
+## Portability
+
+The Hermes plugin implementation is OS-independent:
+
+- it uses Python standard-library networking only
+- it stores state relative to the active Hermes home
+- it does not depend on PowerShell or Windows-only APIs at runtime
+
+What is Windows-specific in this repository is only the helper installer:
+
+- `integrations/hermes-agent/install-hermes-windows.ps1`
+
+On macOS or Linux, copy the same plugin and skill directories manually into
+the active Hermes home, commonly `~/.hermes/plugins/alphaclawxiv` and
+`~/.hermes/skills/alphaxiv`.
+
+Hermes home detection order:
+
+- `HERMES_HOME`, if set
+- the installed plugin parent, when running from `<hermes-home>/plugins/alphaclawxiv`
+- `%LOCALAPPDATA%\hermes` on Windows when `config.yaml` or `.env` exists
+- `~/.hermes` as a legacy fallback
+
 ## Verified On Windows
 
 The following Hermes flows were live-tested on a Windows install using:
 
 - `C:\Users\riddh\AppData\Local\hermes\hermes-agent\venv\Scripts\hermes.exe`
+- active Hermes home: `C:\Users\riddh\AppData\Local\hermes`
 
 Verified working:
 
 - `hermes plugins list` shows `alphaclawxiv` as an installed user plugin
 - `hermes plugins enable alphaclawxiv`
 - `hermes skills list` shows the local `alphaxiv` skill as enabled
-- `hermes alphaclawxiv auth login`
 - `hermes alphaclawxiv auth status`
+- `hermes alphaclawxiv auth login`
 - `hermes alphaclawxiv status`
 - `hermes alphaclawxiv discover --question "Recent retrieval-augmented generation survey papers" --keyword rag --keyword retrieval --keyword survey --difficulty 6`
 
+Verified at the skill level:
+
+- `hermes skills list` shows the local `alphaxiv` skill as enabled
+- the bundled plugin skill and the standalone Hermes skill were both installed into the active Hermes home
+
+Not verified end to end:
+
+- an interactive Hermes conversation where the model autonomously chose and invoked the `alphaxiv` skill prompt path
+
 The native Hermes OAuth flow was verified end to end against AlphaXiv's live
-Clerk/OAuth setup. The plugin now stores auth in `~/.hermes/alphaxiv/oauth.json`
-and mirrors the current bearer header into `~/.hermes/.env`.
+Clerk/OAuth setup. The plugin stores auth in
+`<hermes-home>/alphaxiv/oauth.json` and mirrors the current bearer header into
+`<hermes-home>/.env`.
 
 ## Option 2: Hermes Skill + MCP
 
@@ -57,6 +91,11 @@ Use this path if you want:
 - minimal maintenance
 - direct access to the hosted AlphaXiv MCP tools
 - a reusable Hermes skill without Python plugin code
+
+Special Windows testing note:
+
+- use the discovered Windows binary directly if `hermes` is not on PATH:
+  `C:\Users\<you>\AppData\Local\hermes\hermes-agent\venv\Scripts\hermes.exe`
 
 ## Option 3: Native Hermes Plugin
 
@@ -104,13 +143,20 @@ This repository includes a Windows helper script:
 
 It copies:
 
-- the Hermes plugin into `C:\Users\<you>\.hermes\plugins\alphaclawxiv`
-- the standalone Hermes skill into `C:\Users\<you>\.hermes\skills\alphaxiv`
+- the Hermes plugin into `<hermes-home>\plugins\alphaclawxiv`
+- the standalone Hermes skill into `<hermes-home>\skills\alphaxiv`
 
 Run it from the repository root:
 
 ```powershell
 .\integrations\hermes-agent\install-hermes-windows.ps1
+```
+
+The script defaults to `%LOCALAPPDATA%\hermes` when that active Hermes install
+exists. To override the target explicitly:
+
+```powershell
+.\integrations\hermes-agent\install-hermes-windows.ps1 -HermesHome "$env:LOCALAPPDATA\hermes"
 ```
 
 Then authenticate AlphaXiv for Hermes:
@@ -121,7 +167,7 @@ hermes alphaclawxiv auth login
 
 This prints an AlphaXiv Clerk/OAuth URL, waits for the local callback, stores
 the token in `~/.hermes/alphaxiv/oauth.json`, and writes
-`ALPHAXIV_AUTH_HEADER` into `~/.hermes/.env`.
+`ALPHAXIV_AUTH_HEADER` into `<hermes-home>\.env`.
 
 If `alphaclawxiv` does not appear as a Hermes command immediately after
 installation, enable it once:
@@ -143,7 +189,7 @@ to set this by hand. The plugin writes it automatically after successful login.
 
 Manual fallback option:
 
-1. Create or edit `C:\Users\<you>\.hermes\.env`
+1. Create or edit `<hermes-home>\.env`
 2. Add:
 
 ```text

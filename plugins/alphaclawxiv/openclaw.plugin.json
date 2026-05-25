@@ -2,10 +2,10 @@
   "id": "alphaclawxiv",
   "name": "AlphaClawXiv",
   "description": "Native OpenClaw OAuth, live AlphaXiv MCP paper discovery, PDF analysis, and repository-reading tools.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "enabledByDefault": true,
   "activation": {
-    "onStartup": false,
+    "onStartup": true,
     "onCommands": [
       "alphaclawxiv",
       "alphaxiv"
@@ -18,6 +18,20 @@
       "answer_pdf_queries",
       "read_files_from_github_repository"
     ]
+  },
+  "toolMetadata": {
+    "discover_papers": {
+      "optional": false
+    },
+    "get_paper_content": {
+      "optional": false
+    },
+    "answer_pdf_queries": {
+      "optional": false
+    },
+    "read_files_from_github_repository": {
+      "optional": false
+    }
   },
   "commandAliases": [
     {

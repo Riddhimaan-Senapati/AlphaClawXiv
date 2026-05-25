@@ -891,6 +891,20 @@ const plugin = {
     }
   },
   register(api) {
+    if (typeof api.on === "function") {
+      api.on("before_prompt_build", async () => ({
+        appendSystemContext: [
+          "AlphaClawXiv is installed for AlphaXiv research workflows.",
+          "On Codex-harness OpenClaw agent runs, use the local CLI when native AlphaXiv tools are not visible as model tools:",
+          "- openclaw alphaclawxiv paper search \"<query>\"",
+          "- openclaw alphaclawxiv paper content \"<url>\"",
+          "- openclaw alphaclawxiv pdf ask \"<pdf-url>\" \"<question>\"",
+          "- openclaw alphaclawxiv repo read \"<github-url>\" \"<path>\"",
+          "Do not search the filesystem for AlphaClawXiv before using it; run the command directly.",
+          "Prefer these commands over web search for paper discovery, PDF-grounded answers, and paper implementation repository reads."
+        ].join("\n")
+      }));
+    }
     if (typeof api.registerTool === "function") {
       for (const definition of ALPHAXIV_TOOL_DEFINITIONS) {
         api.registerTool(createAlphaXivTool(definition));

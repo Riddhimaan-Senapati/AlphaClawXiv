@@ -17,7 +17,7 @@ leaks, and make research workflows easier to use.
 Requirements:
 
 - Node.js 20 or newer.
-- OpenClaw 2026.4.29 or newer.
+- OpenClaw 2026.5.20 or newer.
 - An AlphaXiv account for OAuth testing.
 
 Install from a local checkout:
