@@ -106,12 +106,17 @@ Plugin location in this repository:
 
 - `integrations/hermes-agent/plugins/alphaclawxiv/`
 
-The plugin currently registers the live hosted AlphaXiv MCP surface:
+The plugin registers the live hosted AlphaXiv MCP surface across three
+families:
 
-- `discover_papers`
-- `get_paper_content`
-- `answer_pdf_queries`
-- `read_files_from_github_repository`
+- Research tools: `discover_papers`, `get_paper_content`, `answer_pdf_queries`,
+  `read_files_from_github_repository`.
+- Researcher tools: `find_researchers`, `get_researcher`, `get_researcher_papers`,
+  `resolve_researchers`, `list_followed_researchers`, `follow_researcher`,
+  `unfollow_researcher`.
+- Library tools: `list_library`, `save_papers_to_folder`,
+  `remove_papers_from_folder`, `move_papers_between_folders`, `create_folder`,
+  `rename_folder`, `delete_folder`, `edit_private_paper_metadata`.
 
 It also adds a Hermes CLI command:
 

@@ -1,8 +1,8 @@
 {
   "id": "alphaclawxiv",
   "name": "AlphaClawXiv",
-  "description": "Native OpenClaw OAuth, live AlphaXiv MCP paper discovery, PDF analysis, and repository-reading tools.",
-  "version": "0.1.7",
+  "description": "Native OpenClaw OAuth, live AlphaXiv MCP research, researcher, and library tools, PDF analysis, and repository-reading tools.",
+  "version": "0.2.0",
   "enabledByDefault": true,
   "activation": {
     "onStartup": true,
@@ -16,30 +16,48 @@
       "discover_papers",
       "get_paper_content",
       "answer_pdf_queries",
-      "read_files_from_github_repository"
+      "read_files_from_github_repository",
+      "find_researchers",
+      "get_researcher",
+      "get_researcher_papers",
+      "resolve_researchers",
+      "list_followed_researchers",
+      "list_library",
+      "follow_researcher",
+      "unfollow_researcher",
+      "save_papers_to_folder",
+      "remove_papers_from_folder",
+      "move_papers_between_folders",
+      "create_folder",
+      "rename_folder",
+      "delete_folder",
+      "edit_private_paper_metadata"
     ]
   },
   "toolMetadata": {
-    "discover_papers": {
-      "optional": false
-    },
-    "get_paper_content": {
-      "optional": false
-    },
-    "answer_pdf_queries": {
-      "optional": false
-    },
-    "read_files_from_github_repository": {
-      "optional": false
-    }
+    "discover_papers": { "optional": false },
+    "get_paper_content": { "optional": false },
+    "answer_pdf_queries": { "optional": false },
+    "read_files_from_github_repository": { "optional": false },
+    "find_researchers": { "optional": false },
+    "get_researcher": { "optional": false },
+    "get_researcher_papers": { "optional": false },
+    "resolve_researchers": { "optional": false },
+    "list_followed_researchers": { "optional": false },
+    "list_library": { "optional": false },
+    "follow_researcher": { "optional": true },
+    "unfollow_researcher": { "optional": true },
+    "save_papers_to_folder": { "optional": true },
+    "remove_papers_from_folder": { "optional": true },
+    "move_papers_between_folders": { "optional": true },
+    "create_folder": { "optional": true },
+    "rename_folder": { "optional": true },
+    "delete_folder": { "optional": true },
+    "edit_private_paper_metadata": { "optional": true }
   },
   "commandAliases": [
-    {
-      "name": "alphaclawxiv"
-    },
-    {
-      "name": "alphaxiv"
-    }
+    { "name": "alphaclawxiv" },
+    { "name": "alphaxiv" }
   ],
   "skills": [
     "./skills"

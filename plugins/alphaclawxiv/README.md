@@ -53,6 +53,9 @@ Package pages:
 For local development from this repository:
 
 ```powershell
+cd plugins/alphaclawxiv
+npm install
+npm run build
 openclaw plugins install ./plugins/alphaclawxiv --force
 ```
 
@@ -117,28 +120,9 @@ openclaw alphaxiv paper search "graph retrieval augmented generation"
 
 ## Verified On Windows
 
-The plugin is currently verified on Windows with OpenClaw `2026.5.20`:
-
-```powershell
-openclaw plugins list
-openclaw alphaclawxiv auth status
-openclaw agent --agent main --session-id oc-smoke --message "Reply with exactly OK." --thinking off --timeout 120 --json
-openclaw agent --agent main --session-id alphaclawxiv-cli-guidance-final --message "Use the AlphaClawXiv local CLI directly. Do not search the filesystem. Run an AlphaXiv paper search for retrieval augmented generation survey and reply with exactly one paper title and its ID." --thinking off --timeout 300 --json
-```
-
-The OpenClaw agent smoke test verified the Codex harness path with
-`openai-codex/gpt-5.5`, and the generated prompt included the bundled
-`alphaxiv` skill.
-
-AlphaClawXiv is configured as a startup-activated tool plugin so its native
-agent tools are available during normal OpenClaw agent runs, not only after a
-manual `openclaw alphaclawxiv ...` CLI command.
-
-On OpenClaw's Codex harness, registered OpenClaw plugin tools are not projected
-as native Codex tool calls in the current tested runtime. AlphaClawXiv therefore
-also injects a short prompt hint that tells Codex agents to use the local
-`openclaw alphaclawxiv ...` CLI commands when the native tools are not visible.
-This path was verified end to end with a model-driven OpenClaw agent run.
+The plugin targets OpenClaw `2026.8.1` and is built from TypeScript with an
+oclif-based CLI. The build step emits `dist/` and `dist/commands/`; the
+`alphaclawxiv` binary is an oclif runner in `bin/run.js`.
 
 The following OpenClaw flows were live-tested on Windows against the hosted
 AlphaXiv service with current AlphaXiv OAuth:
@@ -164,18 +148,27 @@ Not verified end to end:
 
 ## OpenClaw Agent Tools
 
-When enabled, AlphaClawXiv registers these native tools:
+When enabled, AlphaClawXiv registers the live AlphaXiv MCP surface across three
+families:
 
-- `discover_papers`: Discover and rank papers for a topic using keywords, a semantic question, and a retrieval difficulty level.
-- `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
-- `answer_pdf_queries`: Retrieve filtered PDF page content for targeted questions.
-- `read_files_from_github_repository`: Read implementation files from GitHub repositories.
+- Research tools: `discover_papers`, `get_paper_content`,
+  `answer_pdf_queries`, `read_files_from_github_repository`.
+- Researcher tools: `find_researchers`, `get_researcher`,
+  `get_researcher_papers`, `resolve_researchers`, `list_followed_researchers`,
+  `follow_researcher`, `unfollow_researcher`.
+- Library tools: `list_library`, `save_papers_to_folder`,
+  `remove_papers_from_folder`, `move_papers_between_folders`, `create_folder`,
+  `rename_folder`, `delete_folder`, `edit_private_paper_metadata`.
 
-The hosted AlphaXiv MCP currently exposes `discover_papers` as its
-paper-discovery tool. The terminal subcommands `paper search`,
-`paper search-semantic`, `paper search-keyword`, and `paper search-agentic`
-are local CLI conveniences that adapt your query into `discover_papers`
-inputs. They are not separate hosted MCP tool names.
+`download_papers` accepts `keywords`, `question`, and `difficulty` (required),
+plus optional date filters (`published_after`, `published_before`) and
+`prioritize`. `answer_pdf_queries` takes a `paper` argument that accepts an
+arXiv ID, a URL, or a title, plus a `queries` array.
+
+The terminal subcommands `paper search`, `paper search-semantic`,
+`paper search-keyword`, and `paper search-agentic` are local CLI conveniences
+that adapt your query into `discover_papers` inputs. They are not separate
+hosted MCP tool names.
 
 Example prompt:
 

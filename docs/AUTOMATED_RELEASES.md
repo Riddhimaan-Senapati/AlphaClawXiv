@@ -49,9 +49,11 @@ publisher configuration instead. Until then, `NPM_TOKEN` is the portable path.
 
 ## ClawHub Publishing
 
-The workflow first builds a ClawPack by running `npm pack --json
---ignore-scripts`, dry-runs the ClawHub publish, then logs in to ClawHub with
-`CLAWHUB_TOKEN` and publishes that `.tgz` artifact with source metadata:
+The workflow installs dependencies with `npm ci`, builds and typechecks with
+`npm run build` / `npm run typecheck`, then builds a ClawPack by running
+`npm pack --json --ignore-scripts` over the built `dist/`. It dry-runs the
+ClawHub publish, then logs in to ClawHub with `CLAWHUB_TOKEN` and publishes that
+`.tgz` artifact with source metadata:
 
 ```bash
 npx -y clawhub@0.17.0 package publish "$CLAWPACK_PATH" \
@@ -77,7 +79,7 @@ Before publishing a GitHub Release:
 - Update `plugins/alphaclawxiv/package.json`.
 - Update `plugins/alphaclawxiv/openclaw.plugin.json`.
 - Confirm both versions match.
-- Run `node --check ./plugins/alphaclawxiv/dist/index.js`.
+- Run `npm ci`, `npm run build`, and `npm run typecheck` from `plugins/alphaclawxiv`.
 - Run `npm pack --dry-run` from `plugins/alphaclawxiv`.
 - Run a ClawHub ClawPack dry run with `clawhub@0.17.0`.
 - Confirm README examples and docs match the new behavior.

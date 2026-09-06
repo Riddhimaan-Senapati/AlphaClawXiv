@@ -34,6 +34,7 @@ DISCOVER_PAPERS_SCHEMA = {
     "description": "Discover and rank papers for a topic using keywords, a semantic question, and retrieval difficulty.",
     "parameters": {
         "type": "object",
+        "additionalProperties": False,
         "properties": {
             "keywords": {
                 "type": "array",
@@ -49,6 +50,19 @@ DISCOVER_PAPERS_SCHEMA = {
                 "minimum": 1,
                 "maximum": 10,
                 "description": "Retrieval effort estimate. Higher values perform broader search.",
+            },
+            "published_after": {
+                "type": "string",
+                "description": "Only return papers first published on or after this date (YYYY-MM-DD).",
+            },
+            "published_before": {
+                "type": "string",
+                "description": "Only return papers first published on or before this date (YYYY-MM-DD).",
+            },
+            "prioritize": {
+                "type": "string",
+                "enum": ["default", "historical", "recency"],
+                "description": "How to sort and prioritize the results.",
             },
         },
         "required": ["keywords", "question", "difficulty"],
@@ -81,9 +95,9 @@ ANSWER_PDF_QUERIES_SCHEMA = {
     "parameters": {
         "type": "object",
         "properties": {
-            "url": {
+            "paper": {
                 "type": "string",
-                "description": "PDF or paper URL.",
+                "description": "The paper to read, as an arXiv ID, a URL (arXiv, alphaXiv, Semantic Scholar), a title, or a direct PDF URL.",
             },
             "queries": {
                 "type": "array",
@@ -91,7 +105,7 @@ ANSWER_PDF_QUERIES_SCHEMA = {
                 "description": "Questions to answer about the paper.",
             },
         },
-        "required": ["url", "queries"],
+        "required": ["paper", "queries"],
     },
 }
 
@@ -100,6 +114,7 @@ READ_GITHUB_SCHEMA = {
     "description": "Read files or directories from a paper implementation repository on GitHub.",
     "parameters": {
         "type": "object",
+        "additionalProperties": False,
         "properties": {
             "githubUrl": {
                 "type": "string",
@@ -112,6 +127,226 @@ READ_GITHUB_SCHEMA = {
         },
         "required": ["githubUrl", "path"],
     },
+}
+
+
+def _obj(allowed: Optional[dict] = None) -> dict:
+    return {"type": "object", "additionalProperties": True, "properties": allowed or {}}
+
+
+FIND_RESEARCHERS_SCHEMA = {
+    "name": "find_researchers",
+    "description": "Finds researchers by subject, organization, career history, or coauthorship.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "query": {"type": "string"},
+            "topic": {"type": "string"},
+            "topic_authors": {"type": "string", "enum": ["lead", "senior", "any"]},
+            "affiliation": {"type": "string"},
+            "include_past_affiliations": {"type": "boolean"},
+            "position": _obj({"affiliation": {"type": "string"}, "role": {"type": "string"}, "status": {"type": "string"}, "ended_after": {"type": "string"}, "order_by": {"type": "string"}, "exclude_current_matches": {"type": "array", "items": {"type": "string"}}}),
+            "relationship": _obj({"kind": {"type": "string"}, "researcher": {"type": "string"}, "min_shared_papers": {"type": "number"}}),
+            "role": {"type": "string"},
+            "min_citations": {"type": "number"},
+            "max_citations": {"type": "number"},
+            "sort": {"type": "string", "enum": ["relevance", "citations", "recent_activity", "relationship_strength"]},
+            "limit": {"type": "number"},
+            "page": {"type": "number"},
+        },
+    },
+}
+
+GET_RESEARCHER_SCHEMA = {
+    "name": "get_researcher",
+    "description": "Gets compact profiles for up to 25 researchers at once. Names resolve to the best-matching indexed researcher.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "researchers": {"type": "array", "items": {"type": "string"}},
+            "include": {"type": "array", "items": {"type": "string"}},
+            "papers": {"type": "string", "enum": ["none", "notable", "recent"]},
+            "paper_limit": {"type": "number"},
+        },
+        "required": ["researchers"],
+    },
+}
+
+GET_RESEARCHER_PAPERS_SCHEMA = {
+    "name": "get_researcher_papers",
+    "description": "The papers on alphaXiv for one or many researchers, grouped per researcher.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "researchers": {"type": "array", "items": {"type": "string"}},
+            "sort": {"type": "string", "enum": ["recent", "cited", "viewed"]},
+            "published_after": {"type": "string"},
+            "limit_per_researcher": {"type": "number"},
+        },
+        "required": ["researchers"],
+    },
+}
+
+RESOLVE_RESEARCHERS_SCHEMA = {
+    "name": "resolve_researchers",
+    "description": "Turns a list of people read elsewhere into current alphaXiv researcher entries. Pass every person in one batch.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "people": {"type": "array", "items": _obj({"name": {"type": "string"}, "url": {"type": "string"}})},
+            "related_researchers": {"type": "array", "items": {"type": "string"}},
+        },
+        "required": ["people"],
+    },
+}
+
+LIST_FOLLOWED_RESEARCHERS_SCHEMA = {
+    "name": "list_followed_researchers",
+    "description": "Lists the researchers the user follows, with each one's slug, name, headline or affiliation, and citation count.",
+    "parameters": {"type": "object", "additionalProperties": False},
+}
+
+FOLLOW_RESEARCHER_SCHEMA = {
+    "name": "follow_researcher",
+    "description": "Follows a researcher so their new papers reach the user's feed. Idempotent.",
+    "parameters": {"type": "object", "additionalProperties": False, "properties": {"slug": {"type": "string"}}, "required": ["slug"]},
+}
+
+UNFOLLOW_RESEARCHER_SCHEMA = {
+    "name": "unfollow_researcher",
+    "description": "Stops following a researcher. Idempotent.",
+    "parameters": {"type": "object", "additionalProperties": False, "properties": {"slug": {"type": "string"}}, "required": ["slug"]},
+}
+
+LIST_LIBRARY_SCHEMA = {
+    "name": "list_library",
+    "description": "Lists the user's folders with folder_id, name, type, parent_id, sharing_status, and paper_count.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "include_papers": {"type": "boolean"},
+            "paper_ids_or_urls": {"type": "array", "items": {"type": "string"}},
+        },
+    },
+}
+
+SAVE_PAPERS_TO_FOLDER_SCHEMA = {
+    "name": "save_papers_to_folder",
+    "description": "Adds one or more papers to a folder. Adding is idempotent.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "paper_ids_or_urls": {"type": "array", "items": {"type": "string"}},
+            "folder_id": {"type": "string"},
+        },
+        "required": ["paper_ids_or_urls"],
+    },
+}
+
+REMOVE_PAPERS_FROM_FOLDER_SCHEMA = {
+    "name": "remove_papers_from_folder",
+    "description": "Removes one or more papers from a single folder. Only affects the given folder.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "paper_ids_or_urls": {"type": "array", "items": {"type": "string"}},
+            "folder_id": {"type": "string"},
+        },
+        "required": ["paper_ids_or_urls", "folder_id"],
+    },
+}
+
+MOVE_PAPERS_BETWEEN_FOLDERS_SCHEMA = {
+    "name": "move_papers_between_folders",
+    "description": "Moves papers from a source folder to a destination folder atomically.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "paper_ids_or_urls": {"type": "array", "items": {"type": "string"}},
+            "from_folder_id": {"type": "string"},
+            "to_folder_id": {"type": "string"},
+        },
+        "required": ["paper_ids_or_urls", "from_folder_id", "to_folder_id"],
+    },
+}
+
+CREATE_FOLDER_SCHEMA = {
+    "name": "create_folder",
+    "description": "Creates a new custom folder, optionally nested under an existing folder.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "name": {"type": "string"},
+            "parent_folder_id": {"type": "string"},
+        },
+        "required": ["name"],
+    },
+}
+
+RENAME_FOLDER_SCHEMA = {
+    "name": "rename_folder",
+    "description": "Renames a custom folder. Only custom folders can be renamed.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "folder_id": {"type": "string"},
+            "name": {"type": "string"},
+        },
+        "required": ["folder_id", "name"],
+    },
+}
+
+DELETE_FOLDER_SCHEMA = {
+    "name": "delete_folder",
+    "description": "Deletes a folder and its paper memberships. The papers themselves are not deleted.",
+    "parameters": {"type": "object", "additionalProperties": False, "properties": {"folder_id": {"type": "string"}}, "required": ["folder_id"]},
+}
+
+EDIT_PRIVATE_PAPER_METADATA_SCHEMA = {
+    "name": "edit_private_paper_metadata",
+    "description": "Edits the metadata of a paper you uploaded to alphaXiv yourself. Only the fields you pass change.",
+    "parameters": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "paper_id_or_url": {"type": "string"},
+            "title": {"type": "string"},
+            "abstract": {"type": "string"},
+            "authors": {"type": "array", "items": {"type": "string"}},
+            "publication_date": {"type": "string"},
+            "categories": {"type": "array", "items": {"type": "string"}},
+            "bibtex": {"type": ["string", "null"]},
+        },
+        "required": ["paper_id_or_url"],
+    },
+}
+
+NEW_TOOL_SCHEMAS = {
+    "find_researchers": FIND_RESEARCHERS_SCHEMA,
+    "get_researcher": GET_RESEARCHER_SCHEMA,
+    "get_researcher_papers": GET_RESEARCHER_PAPERS_SCHEMA,
+    "resolve_researchers": RESOLVE_RESEARCHERS_SCHEMA,
+    "list_followed_researchers": LIST_FOLLOWED_RESEARCHERS_SCHEMA,
+    "follow_researcher": FOLLOW_RESEARCHER_SCHEMA,
+    "unfollow_researcher": UNFOLLOW_RESEARCHER_SCHEMA,
+    "list_library": LIST_LIBRARY_SCHEMA,
+    "save_papers_to_folder": SAVE_PAPERS_TO_FOLDER_SCHEMA,
+    "remove_papers_from_folder": REMOVE_PAPERS_FROM_FOLDER_SCHEMA,
+    "move_papers_between_folders": MOVE_PAPERS_BETWEEN_FOLDERS_SCHEMA,
+    "create_folder": CREATE_FOLDER_SCHEMA,
+    "rename_folder": RENAME_FOLDER_SCHEMA,
+    "delete_folder": DELETE_FOLDER_SCHEMA,
+    "edit_private_paper_metadata": EDIT_PRIVATE_PAPER_METADATA_SCHEMA,
 }
 
 
@@ -640,10 +875,18 @@ def get_paper_content_handler(args: Dict[str, Any], **kwargs: Any) -> str:
 def answer_pdf_queries_handler(args: Dict[str, Any], **kwargs: Any) -> str:
     del kwargs
     payload = {
-        "url": args.get("url", ""),
+        "paper": args.get("paper", ""),
         "queries": args.get("queries", []),
     }
     return _call_tool("answer_pdf_queries", payload)
+
+
+def passthrough_handler(tool_name: str):
+    def handler(args: Dict[str, Any], **kwargs: Any) -> str:
+        del kwargs
+        return _call_tool(tool_name, args)
+
+    return handler
 
 
 def read_files_handler(args: Dict[str, Any], **kwargs: Any) -> str:
@@ -750,6 +993,14 @@ def register(ctx: Any) -> None:
         handler=read_files_handler,
         description=READ_GITHUB_SCHEMA["description"],
     )
+    for tool_name, schema in NEW_TOOL_SCHEMAS.items():
+        ctx.register_tool(
+            name=tool_name,
+            toolset="alphaclawxiv",
+            schema=schema,
+            handler=passthrough_handler(tool_name),
+            description=schema["description"],
+        )
     ctx.register_cli_command(
         name="alphaclawxiv",
         help="Manage AlphaClawXiv for Hermes Agent",

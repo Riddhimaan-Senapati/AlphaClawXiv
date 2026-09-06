@@ -35,10 +35,15 @@ same version to ClawHub with source metadata.
 
 ## Verification
 
-Run syntax checks:
+Install dependencies and build:
 
 ```powershell
-node --check ./plugins/alphaclawxiv/dist/index.js
+cd plugins/alphaclawxiv
+npm ci
+npm run build
+npm run typecheck
+Get-ChildItem -Path dist -Recurse -Include *.js | ForEach-Object { node --check $_.FullName }
+cd ../..
 ```
 
 Run a local OpenClaw smoke test:
@@ -91,12 +96,15 @@ npx -y clawhub@0.17.0 package publish "C:\tmp\alphaclawxiv-$version.tgz" `
 ```
 
 The dry run should report `Files:` for a `.tgz` ClawPack and should not use the
-legacy ZIP artifact path. The currently tested OpenClaw compatibility baseline
-is `2026.5.20`.
+legacy ZIP artifact path. The currently targeted OpenClaw compatibility baseline
+is `2026.8.1`.
 
 Expected publish contents:
 
 - `dist/index.js`
+- `dist/storage.js`
+- `dist/commands/**/*.js`
+- `bin/run.js`
 - `LICENSE`
 - `openclaw.plugin.json`
 - `package.json`

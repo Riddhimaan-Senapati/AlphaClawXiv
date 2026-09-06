@@ -1,5 +1,5 @@
 name: alphaclawxiv
-version: 0.1.0
+version: 0.2.0
 description: AlphaXiv research workflows for Hermes Agent via the live hosted MCP surface.
 author: Riddhimaan Senapati
 provides_tools:
@@ -7,3 +7,18 @@ provides_tools:
   - get_paper_content
   - answer_pdf_queries
   - read_files_from_github_repository
+  - find_researchers
+  - get_researcher
+  - get_researcher_papers
+  - resolve_researchers
+  - list_followed_researchers
+  - list_library
+  - follow_researcher
+  - unfollow_researcher
+  - save_papers_to_folder
+  - remove_papers_from_folder
+  - move_papers_between_folders
+  - create_folder
+  - rename_folder
+  - delete_folder
+  - edit_private_paper_metadata

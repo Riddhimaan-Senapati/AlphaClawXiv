@@ -1,5 +1,6 @@
 .npm-cache/
 .npm-cache-verify/
+node_modules/
 .npm-cache-openclaw/
 .npm-cache-openclaw-fresh/
 .npm-cache-release

@@ -14,15 +14,21 @@ Important paths:
 - `plugins/alphaclawxiv/package.json`: npm package metadata, executable entry,
   and OpenClaw runtime metadata.
 - `plugins/alphaclawxiv/openclaw.plugin.json`: OpenClaw plugin manifest.
-- `plugins/alphaclawxiv/dist/index.js`: runtime entry point and tool handlers.
-- `plugins/alphaclawxiv/dist/storage.js`: local auth/config persistence only.
+- `plugins/alphaclawxiv/src/*.ts`: TypeScript source (config, storage, mcp,
+  actions, oauth, pdf, tool-definitions, sdk-types, index).
+- `plugins/alphaclawxiv/src/commands/*.ts`: oclif command classes (built to
+  `dist/commands/`).
+- `plugins/alphaclawxiv/bin/run.js`: checked-in oclif runner (the
+  `alphaclawxiv` binary).
+- `plugins/alphaclawxiv/dist/*.js`: build output from `tsc`. Not committed.
 - `plugins/alphaclawxiv/skills/alphaxiv/SKILL.md`: agent-facing usage guide.
 - `.github/workflows/release.yml`: GitHub Release based npm and ClawHub publish
   workflow.
 
-There is currently no build step. The checked-in `dist/*.js` files are the
-published runtime source. If a build pipeline is introduced later, update
-README, docs, package files, and release verification together.
+There is a build step. `tsc -p tsconfig.json` compiles `src/` to `dist/`, and the
+`prepack` script runs the build so `npm pack` ships a fresh `dist/`. `dist/` is
+gitignored and is not committed; it is produced locally and in CI. If the build
+or editor produces `dist/` locally, never commit it.
 
 ## Naming Rules
 
@@ -47,30 +53,83 @@ connection. The native plugin avoids gateway startup stalls seen when OpenClaw
 tries to connect to the hosted AlphaXiv MCP endpoint during gateway boot.
 
 Do not assume the public AlphaXiv MCP docs page exactly matches the live hosted
-server. During live verification, the hosted `tools/list` endpoint exposed:
+server. As of the 2026.8 docs the hosted surface is:
 
-- `discover_papers`
-- `get_paper_content`
-- `answer_pdf_queries`
-- `read_files_from_github_repository`
+- Research: `discover_papers`, `get_paper_content`, `answer_pdf_queries`,
+  `read_files_from_github_repository`.
+- Researcher: `find_researchers`, `get_researcher`, `get_researcher_papers`,
+  `resolve_researchers`, `list_followed_researchers`, `follow_researcher`,
+  `unfollow_researcher`.
+- Library: `list_library`, `save_papers_to_folder`, `remove_papers_from_folder`,
+  `move_papers_between_folders`, `create_folder`, `rename_folder`,
+  `delete_folder`, `edit_private_paper_metadata`.
 
-The plugin should track the live hosted surface. CLI search variants may be
-implemented as local wrappers over `discover_papers`, but those wrapper names
-are not hosted MCP tool names.
+The plugin registers this full surface. CLI search variants are local wrappers
+over `discover_papers`, but those wrapper names are not hosted MCP tool names.
 
 The optional MCP config command exists for debugging only. Do not make it the
 default install path unless the gateway behavior is revalidated.
 
 Keep storage and network behavior separated:
 
-- `dist/storage.js` may read/write local OpenClaw auth files.
-- `dist/index.js` owns CLI routing, OpenClaw exports, tool definitions, and
-  network calls.
+- `src/storage.ts` may read/write local OpenClaw auth files.
+- `src/index.ts` owns OpenClaw exports, tool registration, and the prompt hint.
+- `src/mcp.ts` owns network calls; `src/actions.ts` holds the per-tool action
+  functions; `src/tool-definitions.ts` builds the 19 tool schemas.
+- `src/oauth.ts` and `src/pdf.ts` are self-contained; `src/cli-forward.ts`
+  forwards `openclaw alphaclawxiv ...` to the oclif CLI.
 - Do not move filesystem reads back into the network-facing runtime path unless
   there is a clear reason and ClawHub static analysis is rechecked.
 
 This split was made to address ClawHub static-analysis findings that flagged
 file reads combined with network sends as possible exfiltration.
+
+## Local OpenClaw Gateway Setup
+
+The plugin's `compat.pluginApi` / `minGatewayVersion` are `>=2026.8.1`. To run
+that, the gateway must be at least 2026.8.1, which requires Node
+`>=24.15.0 <25` (or `>=22.22.3 <23`, or `>=25.9.0`). OpenClaw 2026.5.x only
+needs Node `>=22.19.0`. If `npm install -g openclaw` fails with the preinstall
+"this OpenClaw release requires Node ..." message, the Node version is too old.
+
+After bumping OpenClaw, the old `~/.openclaw/openclaw.json` is rejected with
+schema-drift errors (`Unrecognized key`, `retired`). Run `openclaw doctor --fix`
+to migrate config keys, auth profile, workspace setup state, and the audit log,
+then `openclaw config validate`.
+
+The plugin's `before_prompt_build` prompt-hint hook is a conversation hook. On
+non-bundled plugins OpenClaw blocks it unless the plugin entry opts in:
+
+```json
+{
+  "plugins": {
+    "entries": {
+      "alphaclawxiv": {
+        "enabled": true,
+        "hooks": { "allowConversationAccess": true }
+      }
+    }
+  }
+}
+```
+
+The gateway log reports `typed hook "before_prompt_build" blocked ...` when it is
+not set.
+
+Installing the plugin can land it in a state that needs capability consent:
+`openclaw plugins enable alphaclawxiv --accept-capabilities`. A clean
+`openclaw plugins list` row shows `enabled` with no `requires capability
+consent` warning.
+
+`openclaw gateway restart` waits for health and can hang in this environment;
+`openclaw gateway stop --force` then `openclaw gateway start` restarts the
+detached service. The gateway is a detached Windows service, so killing a shell
+that spawned it does not stop it. In this environment the gateway takes ~70-80s
+to reach `http server listening` (slow agent SQLite open + a
+`registry.npmjs.org/openclaw/latest` fetch timeout), which is why restart/start
+commands appear to hang; the gateway does come up. A direct
+`node .../openclaw/dist/index.js gateway --port 18789` also starts it and
+survives the shell that spawned it.
 
 ## Auth And Secrets
 
@@ -78,6 +137,21 @@ AlphaClawXiv stores user auth outside the repository:
 
 - `~/.openclaw/alphaxiv/oauth.json`
 - `~/.openclaw/.env` with `ALPHAXIV_AUTH_HEADER`
+
+The AlphaXiv OAuth server is path-bearing. The MCP server advertises its
+protected-resource metadata via `WWW-Authenticate`:
+`resource_metadata="https://api.alphaxiv.org/.well-known/oauth-protected-resource/mcp/v1"`
+and `scope="email profile"`. The protected resource identifier is the MCP
+endpoint `https://api.alphaxiv.org/mcp/v1`, NOT the origin. Build the resource
+metadata URL by inserting `/.well-known/oauth-protected-resource` after the
+origin and keeping the MCP path (RFC 9728). The authorization server metadata is
+at the path-inserted URL
+`https://api.alphaxiv.org/auth/.well-known/oauth-authorization-server`, NOT at
+the origin root; build it by appending `/.well-known/oauth-authorization-server`
+to the server path. Using the origin (`https://api.alphaxiv.org`) as the
+resource causes the token exchange to fail with `requested resource invalid`.
+The resource scope is `email profile`. The authorization server supports `S256`
+PKCE and public clients (`token_endpoint_auth_method: none`).
 
 Never commit, print, log, snapshot, or include these values in examples. If you
 need to show auth state, report only redacted status such as whether a token is
@@ -103,14 +177,22 @@ The package previously triggered:
 The fix was architectural, not cosmetic:
 
 - Move auth/config persistence to `dist/storage.js`.
-- Keep `dist/index.js` focused on commands, exports, and network/tool calls.
+- Keep `dist/index.js` (and the CLI/action modules) focused on commands,
+  exports, and network/tool calls.
 - Avoid printing token values.
 - Keep token field names computed in code.
+
+Since the migration to TypeScript, the runtime depends on `@oclif/core` and
+`typebox`. These are declared in `dependencies` and must resolve when the plugin
+is installed by OpenClaw or ClawHub. `openclaw` is deliberately not a runtime
+dependency: the plugin entry is typed against a local `src/sdk-types.ts` surface
+that mirrors the real `openclaw/plugin-sdk` signatures, and it does not import
+`openclaw` at runtime. Do not add a runtime `openclaw` import.
 
 Before publishing, run targeted scans for accidental secret-looking literals:
 
 ```powershell
-Select-String -Path plugins/alphaclawxiv/dist/*.js -Pattern 'accessToken:|refreshToken:|api[_-]?key\s*[:=]|secret\s*[:=]|token\s*[:=]\s*[''"]'
+Get-ChildItem -Path plugins/alphaclawxiv/dist -Recurse -Include *.js | Select-String -Pattern 'accessToken:|refreshToken:|api[_-]?key\s*[:=]|secret\s*[:=]|token\s*[:=]\s*[''"]'
 ```
 
 Also run:
@@ -150,6 +232,79 @@ entry not found: ./dist/index.js`. Current `clawhub@0.17.0` dry-run validation
 succeeds when publishing the `.tgz` generated by `npm pack`, so do not revert to
 the legacy ZIP publish path.
 
+### npm token expiry
+
+The npm `NPM_TOKEN` used by the release workflow is a short-lived automation
+token that expires after 7 days. Recreate it for every release, or the npm
+publish step fails with:
+
+```text
+npm error 404 Not Found - PUT https://registry.npmjs.org/<package> - Not found
+npm error 404  '<package>@<version>' is not in this registry.
+```
+
+E404 on `PUT` is the signature of an unauthenticated publish (the registry does
+not recognize the expired/revoked token). Refresh the token before each release,
+logged in as the npm account that owns the package (`npm whoami` must return
+that user):
+
+```powershell
+npm token create --name "alphaclawxiv-publish" --packages alphaclawxiv --packages-and-scopes-permission read-write
+gh secret set NPM_TOKEN --body "<token>"
+```
+
+`npm token create` requires `--name` in npm 11; omitting it fails with
+`Token name is required`. Do not pass `--read-only` (it blocks publishing). The
+ClawHub `CLAWHUB_TOKEN` is stored in the clawhub CLI at `%APPDATA%\clawhub` and
+is validated with `clawhub whoami`.
+
+### Manual release procedure
+
+To release a new version end to end (npm + ClawHub), from the repository root:
+
+```powershell
+# 1. Set the version in both files (must match, and match the tag vX.Y.Z)
+#    - plugins/alphaclawxiv/package.json
+#    - plugins/alphaclawxiv/openclaw.plugin.json
+
+# 2. Verify the build and package
+cd plugins/alphaclawxiv
+npm ci
+npm run build
+npm run typecheck
+Get-ChildItem -Path dist -Recurse -Include *.js | ForEach-Object { node --check $_.FullName }
+cd ../..
+npm pack ./plugins/alphaclawxiv --json --ignore-scripts --pack-destination C:\tmp
+
+# 3. Verify the oclif CLI discovers every command
+cd plugins/alphaclawxiv
+node bin/run.js --help
+node bin/run.js auth status
+cd ../..
+
+# 4. Refresh the npm token (see above), then ClawHub dry-run
+$version = node -p "require('./plugins/alphaclawxiv/package.json').version"
+$commit = git rev-parse HEAD
+npx -y clawhub@0.17.0 package publish "C:\tmp\alphaclawxiv-$version.tgz" `
+  --family code-plugin `
+  --version $version `
+  --changelog "Release $version" `
+  --source-repo Riddhimaan-Senapati/AlphaClawXiv `
+  --source-commit $commit `
+  --source-ref "v$version" `
+  --source-path plugins/alphaclawxiv `
+  --dry-run
+
+# 5. Commit, tag, push, and create a GitHub Release; the workflow publishes
+#    npm and ClawHub. Then confirm:
+npm view alphaclawxiv version dist-tags.latest
+npx -y clawhub@0.17.0 package inspect alphaclawxiv --versions --limit 5
+```
+
+The release workflow (`.github/workflows/release.yml`) runs `npm ci`, `npm run
+build`, `npm run typecheck`, validates the built `dist/`, builds the ClawPack
+`.tgz`, dry-runs the ClawHub publish, then publishes to npm and ClawHub.
+
 The OpenClaw package metadata currently uses:
 
 ```json
@@ -168,8 +323,12 @@ entries, verify npm pack contents, ClawHub dry run, and a real ClawHub publish.
 Before release:
 
 ```powershell
-node --check ./plugins/alphaclawxiv/dist/index.js
-node --check ./plugins/alphaclawxiv/dist/storage.js
+cd plugins/alphaclawxiv
+npm ci
+npm run build
+npm run typecheck
+Get-ChildItem -Path dist -Recurse -Include *.js | ForEach-Object { node --check $_.FullName }
+cd ../..
 ```
 
 Verify npm package contents:
@@ -184,13 +343,23 @@ Expected published files:
 
 - `LICENSE`
 - `README.md`
+- `bin/run.js`
 - `dist/index.js`
 - `dist/storage.js`
+- `dist/commands/**/*.js`
 - `openclaw.plugin.json`
 - `package.json`
 - `skills/alphaxiv/SKILL.md`
 
-Verify local OpenClaw install:
+Verify the oclif CLI discovers every command:
+
+```powershell
+cd plugins/alphaclawxiv
+node bin/run.js --help
+node bin/run.js auth status
+```
+
+Verify local OpenClaw install (build first):
 
 ```powershell
 openclaw plugins install ./plugins/alphaclawxiv --force
@@ -302,6 +471,15 @@ Do not:
   validation.
 - Treat unrelated local OpenClaw audit warnings as package vulnerabilities.
 - Rename package identifiers from `alphaclawxiv` to `AlphaClawXiv`.
+- Commit `dist/` or `node_modules/`; they are generated or installed artifacts.
+- Remove the TypeScript build step or revert `dist/` to checked-in source; the
+  release workflow and `prepack` assume `npm run build` produces `dist/`.
+- Reintroduce a single-file `dist/index.js` runtime; keep the module split
+  (config, storage, mcp, oauth, pdf, actions, tool-definitions, commands).
+- Add a runtime `openclaw` import; type the plugin against `src/sdk-types.ts`.
+- Break the oclif `topicSeparator: " "` setting or the space-separated
+  `openclaw alphaclawxiv paper search ...` command form; agents and the skill
+  depend on it.
 
 When in doubt, preserve the small native plugin shape and verify with local
 OpenClaw, npm pack, ClawHub dry run, and registry inspection after release.

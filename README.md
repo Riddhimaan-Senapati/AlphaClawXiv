@@ -9,6 +9,7 @@
   <a href="https://www.npmjs.com/package/alphaclawxiv"><img src="https://img.shields.io/npm/dm/alphaclawxiv.svg?cacheSeconds=60" alt="npm downloads"></a>
   <a href="https://clawhub.ai/packages/alphaclawxiv"><img src="https://img.shields.io/badge/ClawHub-alphaclawxiv-blue" alt="ClawHub package"></a>
   <a href="https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml"><img src="https://github.com/Riddhimaan-Senapati/AlphaClawXiv/actions/workflows/release.yml/badge.svg" alt="Release workflow"></a>
+  <a href="https://skills.sh/Riddhimaan-Senapati/AlphaClawXiv"><img src="https://skills.sh/b/Riddhimaan-Senapati/AlphaClawXiv" alt="skills.sh"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/github/license/Riddhimaan-Senapati/AlphaClawXiv.svg" alt="license"></a>
 </p>
 
@@ -106,6 +107,9 @@ openclaw alphaxiv paper search "graph retrieval augmented generation"
 Use a local checkout only when developing or testing unpublished changes:
 
 ```powershell
+cd plugins/alphaclawxiv
+npm install
+npm run build
 openclaw plugins install ./plugins/alphaclawxiv --force
 ```
 
@@ -137,17 +141,17 @@ Use AlphaXiv to find recent retrieval-augmented generation survey papers, then c
 
 ## Native Tools
 
-AlphaClawXiv exposes these tools to OpenClaw:
+AlphaClawXiv exposes the live AlphaXiv MCP surface across three families:
 
-- `discover_papers`: Discover and rank papers for a topic using keywords, a semantic question, and retrieval difficulty.
-- `get_paper_content`: Retrieve paper content from an AlphaXiv, arXiv, or paper URL.
-- `answer_pdf_queries`: Retrieve filtered PDF page content for targeted questions.
-- `read_files_from_github_repository`: Read implementation files from a GitHub repository.
+- Research tools: `discover_papers`, `get_paper_content`, `answer_pdf_queries`, `read_files_from_github_repository`.
+- Researcher tools: `find_researchers`, `get_researcher`, `get_researcher_papers`, `resolve_researchers`, `list_followed_researchers`, `follow_researcher`, `unfollow_researcher`.
+- Library tools: `list_library`, `save_papers_to_folder`, `remove_papers_from_folder`, `move_papers_between_folders`, `create_folder`, `rename_folder`, `delete_folder`, `edit_private_paper_metadata`.
 
-The hosted AlphaXiv MCP currently exposes `discover_papers` as its
-paper-discovery tool. The terminal subcommands `paper search`,
-`paper search-semantic`, `paper search-keyword`, and `paper search-agentic`
-are local CLI conveniences that map your query into `discover_papers` inputs.
+`discover_papers` accepts optional date filters and a `prioritize` value, and
+`answer_pdf_queries` takes a `paper` argument that accepts an arXiv ID, URL, or
+title. The terminal subcommands `paper search`, `paper search-semantic`,
+`paper search-keyword`, and `paper search-agentic` are local CLI conveniences
+that map your query into `discover_papers` inputs.
 
 ## Common Pitfalls
 

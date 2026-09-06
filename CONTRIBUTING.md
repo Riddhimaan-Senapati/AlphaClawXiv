@@ -31,7 +31,12 @@ openclaw gateway restart
 Run a smoke test:
 
 ```powershell
-node --check ./plugins/alphaclawxiv/dist/index.js
+cd plugins/alphaclawxiv
+npm ci
+npm run build
+npm run typecheck
+node bin/run.js auth status
+cd ../..
 openclaw alphaclawxiv paper search "retrieval augmented generation"
 openclaw gateway status
 openclaw gateway health
