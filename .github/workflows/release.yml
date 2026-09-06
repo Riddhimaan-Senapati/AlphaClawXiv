@@ -88,8 +88,6 @@ jobs:
 
       - name: Publish to npm
         run: npm publish ./plugins/alphaclawxiv --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to ClawHub
         shell: bash
