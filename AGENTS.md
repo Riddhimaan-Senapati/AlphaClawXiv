@@ -303,6 +303,12 @@ the release workflow's `Publish to npm` step has been switched to OIDC (no
 path is exercised on the next release. If OIDC ever fails, temporarily restore
 the `--bypass-2fa` token approach above until the trust config is corrected.
 
+Trusted publishing (OIDC auth) requires **npm CLI 11.5.1+ and Node 22.14.0+**.
+The release workflow uses `node-version: "24"` (bundles npm 11.x). The old
+`node-version: "22.x"` resolves to Node 22.23.2 with npm 10.9.8, which cannot do
+OIDC auth and falls back to the token, producing E404 if the token is stale. If
+OIDC publish fails with E404, first confirm the CI npm is 11.5.1+ (Node 24).
+
 ### Manual release procedure
 
 To release a new version end to end (npm + ClawHub), from the repository root:
