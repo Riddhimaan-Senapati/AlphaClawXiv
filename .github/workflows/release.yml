@@ -87,6 +87,8 @@ jobs:
             --dry-run
 
       - name: Publish to npm
+        env:
+          NPM_CONFIG_LOGLEVEL: verbose
         run: npm publish ./plugins/alphaclawxiv --provenance
 
       - name: Publish to ClawHub
