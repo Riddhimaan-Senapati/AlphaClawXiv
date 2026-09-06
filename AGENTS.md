@@ -296,7 +296,12 @@ Once the trust relationship is established, `npm publish ./plugins/alphaclawxiv
 `NODE_AUTH_TOKEN`. Drop it from the `Publish to npm` step (or ignore it). Verify
 `npm publish ./plugins/alphaclawxiv --provenance` succeeds without a token.
 
-Until trusted publishing is configured, keep the `--bypass-2fa` token approach.
+Trusted publishing is now configured for `alphaclawxiv`
+(`file: release.yml`, `repo: Riddhimaan-Senapati/AlphaClawXiv`, `publish`) and
+the release workflow's `Publish to npm` step has been switched to OIDC (no
+`NODE_AUTH_TOKEN`). `0.2.0` was published via the legacy token path; the OIDC
+path is exercised on the next release. If OIDC ever fails, temporarily restore
+the `--bypass-2fa` token approach above until the trust config is corrected.
 
 ### Manual release procedure
 
