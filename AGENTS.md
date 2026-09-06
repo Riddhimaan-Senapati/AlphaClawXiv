@@ -299,15 +299,24 @@ Once the trust relationship is established, `npm publish ./plugins/alphaclawxiv
 Trusted publishing is now configured for `alphaclawxiv`
 (`file: release.yml`, `repo: Riddhimaan-Senapati/AlphaClawXiv`, `publish`) and
 the release workflow's `Publish to npm` step has been switched to OIDC (no
-`NODE_AUTH_TOKEN`). `0.2.0` was published via the legacy token path; the OIDC
-path is exercised on the next release. If OIDC ever fails, temporarily restore
-the `--bypass-2fa` token approach above until the trust config is corrected.
+`NODE_AUTH_TOKEN`). `0.2.0` was published via the legacy token path; `0.2.1` was
+the first OIDC publish and it succeeded (`npm http fetch POST 201
+.../oidc/token/exchange/package/alphaclawxiv` then `npm verbose oidc
+Successfully retrieved and set token`). The `NPM_TOKEN` secret is no longer
+needed for publishing and can be deleted; keep it only if OIDC is temporarily
+broken.
 
 Trusted publishing (OIDC auth) requires **npm CLI 11.5.1+ and Node 22.14.0+**.
 The release workflow uses `node-version: "24"` (bundles npm 11.x). The old
 `node-version: "22.x"` resolves to Node 22.23.2 with npm 10.9.8, which cannot do
 OIDC auth and falls back to the token, producing E404 if the token is stale. If
 OIDC publish fails with E404, first confirm the CI npm is 11.5.1+ (Node 24).
+
+A release runs the workflow from the **commit the tag points to**, not from
+`main` HEAD. If you fix the workflow after a tag/release already exists, the
+tag still uses the old workflow. Either move the tag to the new commit
+(`git tag -f vX.Y.Z <new-sha> && git push --force origin vX.Y.Z`, then delete
+and re-create the release) or bump the version so a fresh tag is created.
 
 ### Manual release procedure
 
