@@ -26,7 +26,7 @@ Hermes home detection order:
 - `%LOCALAPPDATA%\hermes` on Windows when `config.yaml` or `.env` exists
 - `~/.hermes` as a legacy fallback
 
-## Verified On Windows
+## Verified on Windows
 
 The following Hermes flows were live-tested on a Windows install using:
 
@@ -140,7 +140,7 @@ Optional:
 
 - `ALPHAXIV_MCP_URL` with default `https://api.alphaxiv.org/mcp/v1`
 
-## Windows Install
+## Windows install
 
 This repository includes a Windows helper script:
 
@@ -183,7 +183,7 @@ hermes plugins enable alphaclawxiv
 
 Hermes marks user plugins as opt-in by default.
 
-## Setting `ALPHAXIV_AUTH_HEADER` On Windows
+## Setting `ALPHAXIV_AUTH_HEADER` on Windows
 
 Hermes documentation indicates that environment variables are typically stored
 in `~/.hermes/.env`, and Windows also supports process-scope environment
@@ -232,14 +232,14 @@ hermes alphaclawxiv status
 hermes alphaclawxiv discover --question "Recent retrieval-augmented generation survey papers" --keyword rag --keyword retrieval --keyword survey --difficulty 6
 ```
 
-## Important Compatibility Note
+## Compatibility note
 
 The public AlphaXiv MCP docs page has described more tool names than the live
 hosted server exposed during real integration testing. Hermes integration in
 this repository intentionally follows the live hosted `tools/list` surface so
 the plugin and skill keep working against the real service.
 
-## Hermes Docs Basis
+## Hermes docs basis
 
 This integration design was guided by Hermes Agent documentation retrieved via
 Context7:

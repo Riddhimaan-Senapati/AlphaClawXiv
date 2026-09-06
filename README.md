@@ -40,13 +40,12 @@ The publishable plugin package lives in [plugins/alphaclawxiv](./plugins/alphacl
 For upstream MCP behavior, see the [AlphaXiv MCP documentation](https://www.alphaxiv.org/docs/mcp).
 
 ## Why AlphaClawXiv
-
 - Keeps AlphaXiv usable from OpenClaw without relying on a persistent `mcp.servers.alphaxiv` startup connection.
 - Exposes a native OpenClaw workflow for paper discovery, paper reading, and PDF-grounded research questions.
 - Preserves a practical terminal UX through `openclaw alphaclawxiv ...` commands.
 - Uses local OAuth state and redacted status output instead of leaking tokens into logs or prompts.
 
-## What It Does
+## What it does
 
 - Authenticates with AlphaXiv through a local OAuth callback flow.
 - Registers native OpenClaw tools for paper discovery and paper analysis.
@@ -75,13 +74,17 @@ Package pages:
 - npm: [alphaclawxiv](https://www.npmjs.com/package/alphaclawxiv)
 - ClawHub: [alphaclawxiv](https://clawhub.ai/packages/alphaclawxiv)
 
-For local development from this repository:
+For local development from this repository, build the plugin first, then install
+it:
 
 ```powershell
+cd plugins/alphaclawxiv
+npm install
+npm run build
 openclaw plugins install ./plugins/alphaclawxiv --force
 ```
 
-## Quick Start
+## Quick start
 
 After installation, log in to AlphaXiv:
 
@@ -102,7 +105,7 @@ The shorter alias also works:
 openclaw alphaxiv paper search "graph retrieval augmented generation"
 ```
 
-## Development Install
+## Development install
 
 Use a local checkout only when developing or testing unpublished changes:
 
@@ -139,7 +142,7 @@ Use it from an OpenClaw agent:
 Use AlphaXiv to find recent retrieval-augmented generation survey papers, then compare their methods, scope, and limitations.
 ```
 
-## Native Tools
+## Native tools
 
 AlphaClawXiv exposes the live AlphaXiv MCP surface across three families:
 
@@ -153,7 +156,7 @@ title. The terminal subcommands `paper search`, `paper search-semantic`,
 `paper search-keyword`, and `paper search-agentic` are local CLI conveniences
 that map your query into `discover_papers` inputs.
 
-## Common Pitfalls
+## Common pitfalls
 
 - Run `openclaw alphaclawxiv auth login` before using tools. A missing or expired token causes tool calls to fail.
 - Restart the gateway after first login or after installing/updating the plugin.
@@ -165,7 +168,7 @@ that map your query into `discover_papers` inputs.
 - If a Windows reinstall fails with `EPERM` while renaming `~/.openclaw/extensions/alphaclawxiv`, stop the OpenClaw gateway before retrying the install.
 - If `openclaw gateway restart` points at a deleted npx cache path, repair the Windows service with `openclaw gateway install --force`.
 
-## Project Docs
+## Project docs
 
 - [Contributing](./CONTRIBUTING.md)
 - [Code Structure](./docs/CODE_STRUCTURE.md)

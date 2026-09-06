@@ -1,10 +1,10 @@
-# Agent Notes
+# Agent notes
 
 This file captures the practical lessons, pitfalls, and architecture choices
 made while building AlphaClawXiv. It is intended for coding agents and
 maintainers working in this repository.
 
-## Project Shape
+## Project shape
 
 AlphaClawXiv is a native OpenClaw code plugin for AlphaXiv. The publishable
 package is not the repository root; it is `plugins/alphaclawxiv`.
@@ -30,7 +30,7 @@ There is a build step. `tsc -p tsconfig.json` compiles `src/` to `dist/`, and th
 gitignored and is not committed; it is produced locally and in CI. If the build
 or editor produces `dist/` locally, never commit it.
 
-## Naming Rules
+## Naming rules
 
 Use `AlphaClawXiv` for prose, display names, headings, and UI-facing text.
 
@@ -46,7 +46,7 @@ Use `alphaclawxiv` only for package-name contexts and stable identifiers:
 Do not rename `skills/alphaxiv`; that folder describes the upstream AlphaXiv
 workflow, not the package brand.
 
-## Architecture Choices
+## Architecture choices
 
 Prefer native OpenClaw tools over a persistent `mcp.servers.alphaxiv` gateway
 connection. The native plugin avoids gateway startup stalls seen when OpenClaw
@@ -74,9 +74,9 @@ Keep storage and network behavior separated:
 
 - `src/storage.ts` may read/write local OpenClaw auth files.
 - `src/index.ts` owns OpenClaw exports, tool registration, and the prompt hint.
-- `src/mcp.ts` owns network calls; `src/actions.ts` holds the per-tool action
-  functions; `src/tool-definitions.ts` builds the 19 tool schemas.
-- `src/oauth.ts` and `src/pdf.ts` are self-contained; `src/cli-forward.ts`
+- `src/mcp.ts` owns network calls. `src/actions.ts` holds the per-tool action
+  functions. `src/tool-definitions.ts` builds the 19 tool schemas.
+- `src/oauth.ts` and `src/pdf.ts` are self-contained. `src/cli-forward.ts`
   forwards `openclaw alphaclawxiv ...` to the oclif CLI.
 - Do not move filesystem reads back into the network-facing runtime path unless
   there is a clear reason and ClawHub static analysis is rechecked.
@@ -84,7 +84,7 @@ Keep storage and network behavior separated:
 This split was made to address ClawHub static-analysis findings that flagged
 file reads combined with network sends as possible exfiltration.
 
-## Local OpenClaw Gateway Setup
+## Local OpenClaw gateway setup
 
 The plugin's `compat.pluginApi` / `minGatewayVersion` are `>=2026.8.1`. To run
 that, the gateway must be at least 2026.8.1, which requires Node
@@ -121,7 +121,7 @@ Installing the plugin can land it in a state that needs capability consent:
 `openclaw plugins list` row shows `enabled` with no `requires capability
 consent` warning.
 
-`openclaw gateway restart` waits for health and can hang in this environment;
+`openclaw gateway restart` waits for health and can hang in this environment.
 `openclaw gateway stop --force` then `openclaw gateway start` restarts the
 detached service. The gateway is a detached Windows service, so killing a shell
 that spawned it does not stop it. In this environment the gateway takes ~70-80s
@@ -131,7 +131,7 @@ commands appear to hang; the gateway does come up. A direct
 `node .../openclaw/dist/index.js gateway --port 18789` also starts it and
 survives the shell that spawned it.
 
-## Auth And Secrets
+## Auth and secrets
 
 AlphaClawXiv stores user auth outside the repository:
 
@@ -147,7 +147,7 @@ metadata URL by inserting `/.well-known/oauth-protected-resource` after the
 origin and keeping the MCP path (RFC 9728). The authorization server metadata is
 at the path-inserted URL
 `https://api.alphaxiv.org/auth/.well-known/oauth-authorization-server`, NOT at
-the origin root; build it by appending `/.well-known/oauth-authorization-server`
+the origin root. Build it by appending `/.well-known/oauth-authorization-server`
 to the server path. Using the origin (`https://api.alphaxiv.org`) as the
 resource causes the token exchange to fail with `requested resource invalid`.
 The resource scope is `email profile`. The authorization server supports `S256`
@@ -166,7 +166,7 @@ while reducing false positives.
 Do not read the repository root `.env` unless the task explicitly requires it.
 It is local state and should not be part of published package behavior.
 
-## ClawHub Static Analysis Pitfalls
+## ClawHub static analysis pitfalls
 
 The package previously triggered:
 
@@ -206,7 +206,7 @@ control, or unrelated installed plugins are not automatically AlphaClawXiv
 package failures. Confirm whether the warning references this package before
 changing package code.
 
-## Release And Publishing Pitfalls
+## Release and publishing pitfalls
 
 npm versions are immutable. If a GitHub release publishes npm but ClawHub fails,
 do not retry the same version. Bump both package versions and release again.
@@ -218,9 +218,9 @@ Always update both:
 
 The release tag must match the package version, usually `vX.Y.Z`.
 
-The workflow currently pins ClawHub CLI to `clawhub@0.17.0` and publishes an
-explicit npm-pack `.tgz` ClawPack. This is intentional. OpenClaw warns about
-packages published through the legacy ZIP path:
+The workflow pins the ClawHub CLI to `clawhub@0.17.0` and publishes an explicit
+npm-pack `.tgz` ClawPack. OpenClaw warns about packages published through the
+legacy ZIP path:
 
 ```text
 This plugin uses the legacy ZIP path and may have compatibility issues until the publisher uploads a ClawPack.
@@ -274,9 +274,9 @@ and is validated with `clawhub whoami`.
 ### Move to trusted publishing (OIDC)
 
 npm is removing `bypass-2fa` direct publishing in January 2027, and the token
-expires every 7 days anyway. The durable path is npm **trusted publishing**
-(OIDC), which needs no token and no 2FA. The workflow already has
-`id-token: write` and publishes with `--provenance`.
+expires every 7 days anyway. The durable path is npm trusted publishing (OIDC),
+which needs no token and no 2FA. The workflow already has `id-token: write` and
+publishes with `--provenance`.
 
 To connect the repo as a trusted publisher for the package via the CLI:
 
@@ -284,12 +284,12 @@ To connect the repo as a trusted publisher for the package via the CLI:
 npm trust github alphaclawxiv --file release.yml --repo Riddhimaan-Senapati/AlphaClawXiv --allow-publish
 ```
 
-`--file` takes the workflow **filename only** (not a path); passing
+`--file` takes the workflow filename only (not a path). Passing
 `.github/workflows/release.yml` fails with `GitHub Actions workflow must be just
 a file not a path`. This is an account/package management action, so npm
-**requires an interactive 2FA/OTP** even for the CLI; run it in a real terminal
-and complete the browser/OTP auth. `npm trust github ... --dry-run --json`
-previews the payload without 2FA.
+requires an interactive 2FA/OTP even for the CLI. Run it in a real terminal and
+complete the browser/OTP auth. `npm trust github ... --dry-run --json` previews
+the payload without 2FA.
 
 Once the trust relationship is established, `npm publish ./plugins/alphaclawxiv
 --provenance` authenticates via the GitHub Actions OIDC token and no longer needs
@@ -299,20 +299,20 @@ Once the trust relationship is established, `npm publish ./plugins/alphaclawxiv
 Trusted publishing is now configured for `alphaclawxiv`
 (`file: release.yml`, `repo: Riddhimaan-Senapati/AlphaClawXiv`, `publish`) and
 the release workflow's `Publish to npm` step has been switched to OIDC (no
-`NODE_AUTH_TOKEN`). `0.2.0` was published via the legacy token path; `0.2.1` was
+`NODE_AUTH_TOKEN`). `0.2.0` was published via the legacy token path. `0.2.1` was
 the first OIDC publish and it succeeded (`npm http fetch POST 201
 .../oidc/token/exchange/package/alphaclawxiv` then `npm verbose oidc
 Successfully retrieved and set token`). The `NPM_TOKEN` secret is no longer
-needed for publishing and can be deleted; keep it only if OIDC is temporarily
+needed for publishing and can be deleted. Keep it only if OIDC is temporarily
 broken.
 
-Trusted publishing (OIDC auth) requires **npm CLI 11.5.1+ and Node 22.14.0+**.
+Trusted publishing (OIDC auth) requires npm CLI 11.5.1+ and Node 22.14.0+.
 The release workflow uses `node-version: "24"` (bundles npm 11.x). The old
 `node-version: "22.x"` resolves to Node 22.23.2 with npm 10.9.8, which cannot do
 OIDC auth and falls back to the token, producing E404 if the token is stale. If
 OIDC publish fails with E404, first confirm the CI npm is 11.5.1+ (Node 24).
 
-A release runs the workflow from the **commit the tag points to**, not from
+A release runs the workflow from the commit the tag points to, not from
 `main` HEAD. If you fix the workflow after a tag/release already exists, the
 tag still uses the old workflow. Either move the tag to the new commit
 (`git tag -f vX.Y.Z <new-sha> && git push --force origin vX.Y.Z`, then delete
@@ -342,7 +342,9 @@ node bin/run.js --help
 node bin/run.js auth status
 cd ../..
 
-# 4. Refresh the npm token (see above), then ClawHub dry-run
+# 4. ClawHub dry-run. npm publishes via OIDC in the GitHub Actions workflow, so
+#    no npm token is needed for the automated path. This token step only applies
+#    to a fully local manual publish.
 $version = node -p "require('./plugins/alphaclawxiv/package.json').version"
 $commit = git rev-parse HEAD
 npx -y clawhub@0.17.0 package publish "C:\tmp\alphaclawxiv-$version.tgz" `
@@ -378,7 +380,7 @@ ClawHub normalizes `./dist/index.js` and `dist/index.js` internally, but package
 path handling has changed across ClawHub CLI versions. If you change these
 entries, verify npm pack contents, ClawHub dry run, and a real ClawHub publish.
 
-## Verification Checklist
+## Verification checklist
 
 Before release:
 
@@ -458,7 +460,7 @@ npm view alphaclawxiv version dist-tags.latest
 npx -y clawhub@0.17.0 package inspect alphaclawxiv --versions --limit 5
 ```
 
-## Windows-Specific Pitfalls
+## Windows-specific pitfalls
 
 This repository has been developed and tested on Windows. Prefer PowerShell
 commands in docs and examples unless a workflow file is Linux-only.
@@ -492,7 +494,7 @@ Remove generated local caches before committing. Do not commit:
 When deleting generated directories, verify the resolved path is inside the
 workspace before using recursive removal.
 
-## Documentation Expectations
+## Documentation expectations
 
 Keep README user-facing. Do not put maintainer-only release procedures back into
 README. Use:
@@ -506,7 +508,7 @@ When changing CLI examples, test them locally where possible. If a command needs
 auth, test `auth status` at minimum and clearly note any untested authenticated
 behavior.
 
-## Dependency And Docs Policy
+## Dependency and docs policy
 
 Use Context7 MCP when checking current documentation for OpenClaw, ClawHub,
 npm, GitHub CLI, AlphaXiv MCP, or any other library/CLI/API behavior. Do not
@@ -517,7 +519,7 @@ ClawHub validator and CLI source were necessary to understand why older
 ClawHub releases failed, and why the workflow now publishes an explicit
 npm-pack ClawPack with `clawhub@0.17.0`.
 
-## What Not To Regress
+## What not to regress
 
 Do not:
 

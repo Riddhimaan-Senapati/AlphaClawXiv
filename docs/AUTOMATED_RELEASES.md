@@ -1,10 +1,10 @@
-# Automated Releases
+# Automated releases
 
 AlphaClawXiv is set up for GitHub Release based publishing. A published GitHub
 Release triggers `.github/workflows/release.yml`, which verifies the package and
 publishes it to npm and ClawHub.
 
-## Release Model
+## Release model
 
 The release workflow runs when a GitHub Release is published:
 
@@ -18,7 +18,7 @@ The release tag should match the package version, with or without a leading
 `v`. For example, package version `0.1.1` can be released as `0.1.1` or
 `v0.1.1`.
 
-## Required Repository Secrets
+## Required repository secrets
 
 Configure these secrets in GitHub:
 
@@ -31,7 +31,7 @@ GitHub path:
 Repository Settings -> Secrets and variables -> Actions -> New repository secret
 ```
 
-## npm Publishing
+## npm publishing
 
 The workflow uses `actions/setup-node` with the npm registry URL, then publishes
 the package directory:
@@ -47,7 +47,7 @@ If you later configure npm trusted publishing for this repository, you can
 remove `NODE_AUTH_TOKEN` from the npm publish step and rely on npm's trusted
 publisher configuration instead. Until then, `NPM_TOKEN` is the portable path.
 
-## ClawHub Publishing
+## ClawHub publishing
 
 The workflow installs dependencies with `npm ci`, builds and typechecks with
 `npm run build` / `npm run typecheck`, then builds a ClawPack by running
@@ -72,7 +72,7 @@ compatibility issues until the publisher uploads a ClawPack.` The source
 metadata lets ClawHub connect the package artifact back to the exact GitHub
 source revision.
 
-## Release Checklist
+## Release checklist
 
 Before publishing a GitHub Release:
 
@@ -86,7 +86,7 @@ Before publishing a GitHub Release:
 - Commit and push the release changes.
 - Create a GitHub Release with a tag matching the package version.
 
-## Failure Modes
+## Failure modes
 
 If npm publish fails with an auth error, rotate or replace `NPM_TOKEN`.
 

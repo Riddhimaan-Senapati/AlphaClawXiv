@@ -1,9 +1,9 @@
-# Code Structure
+# Code structure
 
 AlphaClawXiv is a small native OpenClaw plugin. It is built from TypeScript into
 `dist/` in CI and before `npm pack`, and ships an oclif-based CLI.
 
-## Repository Layout
+## Repository layout
 
 ```text
 .
@@ -47,7 +47,7 @@ AlphaClawXiv is a small native OpenClaw plugin. It is built from TypeScript into
                 `-- SKILL.md
 ```
 
-## Runtime Package
+## Runtime package
 
 `plugins/alphaclawxiv` is the publishable npm and ClawHub package. The package
 name is `alphaclawxiv`; the project and display name are `AlphaClawXiv`.
@@ -66,7 +66,7 @@ Important files:
 - `skills/alphaxiv/SKILL.md`: agent-facing usage guidance for AlphaXiv research
   workflows.
 
-## Runtime Responsibilities
+## Runtime responsibilities
 
 The source modules divide by concern:
 
@@ -96,7 +96,7 @@ calls happen only after a user command or OpenClaw tool invocation.
 `prepack` runs the build so `npm pack` ships a fresh `dist/`. `dist/` is
 gitignored and produced locally and in CI; never commit it.
 
-## Naming Rules
+## Naming rules
 
 Use `AlphaClawXiv` for the project, documentation prose, UI display names, and
 OpenClaw plugin display text.
@@ -110,7 +110,7 @@ Use `alphaclawxiv` only where lowercase identifiers are required or conventional
 - filesystem path under `plugins/`.
 - executable name in `package.json`.
 
-## Auth State
+## Auth state
 
 AlphaClawXiv stores local auth state outside the repository:
 
@@ -120,7 +120,7 @@ AlphaClawXiv stores local auth state outside the repository:
 These files must never be copied into the repository, examples, fixtures, logs,
 or issue comments.
 
-## Adding Features
+## Adding features
 
 When adding a new AlphaXiv capability:
 

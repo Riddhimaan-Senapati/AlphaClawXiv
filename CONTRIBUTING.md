@@ -4,7 +4,7 @@ Thanks for considering a contribution. AlphaClawXiv is a small OpenClaw plugin,
 so the bar for changes is straightforward: keep the gateway stable, avoid token
 leaks, and make research workflows easier to use.
 
-## Ways to Contribute
+## Ways to contribute
 
 - Report bugs with clear reproduction steps.
 - Improve docs, examples, and troubleshooting notes.
@@ -12,17 +12,21 @@ leaks, and make research workflows easier to use.
 - Improve command UX without changing stored token semantics.
 - Add support for new AlphaXiv tools when the upstream API exposes them.
 
-## Development Setup
+## Development setup
 
 Requirements:
 
-- Node.js 20 or newer.
-- OpenClaw 2026.5.20 or newer.
+- Node.js 24 or newer.
+- OpenClaw 2026.8.1 or newer.
 - An AlphaXiv account for OAuth testing.
 
 Install from a local checkout:
 
 ```powershell
+cd plugins/alphaclawxiv
+npm ci
+npm run build
+cd ../..
 openclaw plugins install ./plugins/alphaclawxiv --force
 openclaw alphaclawxiv auth login
 openclaw gateway restart
@@ -42,7 +46,7 @@ openclaw gateway status
 openclaw gateway health
 ```
 
-## Code Guidelines
+## Code guidelines
 
 - Keep the plugin dependency-free unless a dependency is clearly justified.
 - Do not print access tokens, refresh tokens, auth headers, or OAuth callback secrets.
@@ -51,18 +55,19 @@ openclaw gateway health
 - Prefer native OpenClaw tools over generic MCP startup config.
 - Keep package contents small and verify them with `npm pack --dry-run`.
 
-## Pull Request Checklist
+## Pull request checklist
 
 Before opening a PR:
 
-- Run `node --check ./plugins/alphaclawxiv/dist/index.js`.
+- Run `npm ci`, `npm run build`, and `npm run typecheck` from `plugins/alphaclawxiv`.
+- Run `node --check` on every built `dist/**/*.js` file.
 - Run at least one AlphaXiv command against a real authenticated session.
 - Run `openclaw gateway status` and `openclaw gateway health`.
 - Update README or docs when behavior changes.
 - Confirm no local secrets, logs, tarballs, or npm caches are included.
 - If package metadata changed, run the checks in [docs/PUBLISHING.md](./docs/PUBLISHING.md).
 
-## Issue Guidelines
+## Issue guidelines
 
 Good issues include:
 
@@ -81,7 +86,7 @@ Never include:
 - `~/.openclaw/alphaxiv/oauth.json`
 - Full `~/.openclaw/.env`
 
-## Security Reports
+## Security reports
 
 Do not open public issues for vulnerabilities or token exposure. Use a private
 GitHub security advisory if available, or contact the maintainer directly with a

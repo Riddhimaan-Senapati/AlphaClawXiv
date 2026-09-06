@@ -10,7 +10,7 @@ Native OpenClaw plugin for AlphaXiv research workflows: OAuth login, paper
 discovery, paper content lookup, targeted PDF passage retrieval, and
 repository-reading tools.
 
-## Why This Exists
+## Why this exists
 
 AlphaXiv exposes a hosted MCP endpoint. AlphaClawXiv wraps that endpoint as
 native OpenClaw commands and tools so the gateway does not need to connect to a
@@ -59,7 +59,7 @@ npm run build
 openclaw plugins install ./plugins/alphaclawxiv --force
 ```
 
-## First Login
+## First login
 
 ```powershell
 openclaw alphaclawxiv auth login
@@ -118,7 +118,7 @@ The shorter alias is also supported:
 openclaw alphaxiv paper search "graph retrieval augmented generation"
 ```
 
-## Verified On Windows
+## Verified on Windows
 
 The plugin targets OpenClaw `2026.8.1` and is built from TypeScript with an
 oclif-based CLI. The build step emits `dist/` and `dist/commands/`; the
@@ -146,7 +146,7 @@ Not verified end to end:
 
 - direct native OpenClaw tool projection inside the Codex app-server tool list; the tested Codex path uses AlphaClawXiv through the local OpenClaw CLI
 
-## OpenClaw Agent Tools
+## OpenClaw agent tools
 
 When enabled, AlphaClawXiv registers the live AlphaXiv MCP surface across three
 families:
@@ -160,7 +160,7 @@ families:
   `remove_papers_from_folder`, `move_papers_between_folders`, `create_folder`,
   `rename_folder`, `delete_folder`, `edit_private_paper_metadata`.
 
-`download_papers` accepts `keywords`, `question`, and `difficulty` (required),
+`discover_papers` accepts `keywords`, `question`, and `difficulty` (required),
 plus optional date filters (`published_after`, `published_before`) and
 `prioritize`. `answer_pdf_queries` takes a `paper` argument that accepts an
 arXiv ID, a URL, or a title, plus a `queries` array.
@@ -187,7 +187,7 @@ Use AlphaXiv to find recent retrieval-augmented generation survey papers, then c
 - If OpenClaw `2026.5.x` reports that the Codex app-server binary is missing, reinstall/update OpenClaw and `@openclaw/codex`, then verify `plugins.entries.codex.config.appServer.command` points at the local `codex.cmd` if managed discovery still fails.
 - Do not share `~/.openclaw/alphaxiv/oauth.json` or `ALPHAXIV_AUTH_HEADER`.
 
-## Project Links
+## Project links
 
 - Repository: https://github.com/Riddhimaan-Senapati/AlphaClawXiv
 - Issues: https://github.com/Riddhimaan-Senapati/AlphaClawXiv/issues

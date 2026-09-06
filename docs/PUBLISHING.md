@@ -22,7 +22,7 @@ one-off recovery or local verification.
   - `openclaw.build.pluginSdkVersion`
 - ClawHub publishing uses a ClawPack `.tgz` artifact, not the legacy ZIP path.
 
-## Automated Release Path
+## Automated release path
 
 1. Bump `plugins/alphaclawxiv/package.json`.
 2. Bump `plugins/alphaclawxiv/openclaw.plugin.json` to the same version.
@@ -144,7 +144,7 @@ npx -y clawhub@0.17.0 package publish "C:\tmp\alphaclawxiv-$version.tgz" `
   --source-path plugins/alphaclawxiv
 ```
 
-## Post-Publish Checks
+## Post-publish checks
 
 Verify npm metadata:
 
